@@ -1,8 +1,8 @@
-package kr.co.MyPick_server.Service.openAI;
+package kr.co.MyPick_server.Service.chat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kr.co.MyPick_server.DTO.OpenAIReq;
-import kr.co.MyPick_server.DTO.OpenAIRes;
+import kr.co.MyPick_server.DTO.chat.ChatReq;
+import kr.co.MyPick_server.DTO.chat.ChatRes;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class OpenAIService implements OpenAIServiceImpl {
+public class ChatService implements ChatServiceImpl {
 
     @Value("${openai.api.key}")
     private String apiKey;
@@ -28,7 +28,7 @@ public class OpenAIService implements OpenAIServiceImpl {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public OpenAIReq getResponse(OpenAIRes openAIRes) {
+    public ChatReq getResponse(ChatRes openAIRes) {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             // HttpPost 요청 생성
             HttpPost request = new HttpPost(apiUrl);
@@ -81,7 +81,7 @@ public class OpenAIService implements OpenAIServiceImpl {
                 }
 
                 // 응답 DTO 생성
-                OpenAIReq openAIReq = new OpenAIReq();
+                ChatReq openAIReq = new ChatReq();
                 openAIReq.setResponseText(text.trim());
                 return openAIReq;
             }
