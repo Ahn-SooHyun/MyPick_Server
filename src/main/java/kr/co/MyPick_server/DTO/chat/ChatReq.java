@@ -4,5 +4,5 @@ import lombok.Data;
 
 @Data
 public class ChatReq {
-    private String responseText; // 생성된 응답 텍스트
+    private String prompt; // 요청에 포함될 질문 또는 입력값
 }

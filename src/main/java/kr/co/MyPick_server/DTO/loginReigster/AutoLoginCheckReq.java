@@ -5,7 +5,8 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class AutoLoginRes {
+public class AutoLoginCheckReq {
     private int userIdx;
     private Date loginTokenDate;
+
 }

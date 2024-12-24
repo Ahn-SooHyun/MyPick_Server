@@ -1,26 +1,30 @@
 package kr.co.MyPick_server.controller.loginRegister;
 
+import kr.co.MyPick_server.DTO.loginReigster.AutoLoginReq;
 import kr.co.MyPick_server.Service.loginRegister.LoginService;
 import kr.co.MyPick_server.Util.ResponsData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/login")
 public class LoginController {
 
+    Logger logger = LoggerFactory.getLogger(LoginController.class);
+
     @Autowired
     private LoginService loginService;
 
-    @GetMapping("/autoLogin")
-    public ResponseEntity<?> autoLogin(@RequestParam String autoLogin) {
+    @PostMapping("/autoLogin")
+    public ResponseEntity<?> autoLogin(@RequestBody AutoLoginReq autoLoginReq) {
         ResponsData data = new ResponsData();
 
-        int IDX = loginService.autoLoginCheck(autoLogin);
+        logger.info(autoLoginReq.toString());
+
+        int IDX = loginService.autoLoginCheck(autoLoginReq.getTocken());
         if (IDX == -1) {
             data.setCode("401");
             data.setMessage("autoLogin does not exist.");

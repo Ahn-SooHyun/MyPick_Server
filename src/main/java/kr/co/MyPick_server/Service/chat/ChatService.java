@@ -28,7 +28,7 @@ public class ChatService implements ChatServiceImpl {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public ChatReq getResponse(ChatRes openAIRes) {
+    public ChatRes getResponse(ChatReq chatReq) {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             // HttpPost 요청 생성
             HttpPost request = new HttpPost(apiUrl);
@@ -41,7 +41,7 @@ public class ChatService implements ChatServiceImpl {
 
             // messages 배열 구성
             List<Map<String, String>> messages = List.of(
-                    Map.of("role", "user", "content", openAIRes.getPrompt())
+                    Map.of("role", "user", "content", chatReq.getPrompt())
             );
             body.put("messages", messages);
 
@@ -81,9 +81,9 @@ public class ChatService implements ChatServiceImpl {
                 }
 
                 // 응답 DTO 생성
-                ChatReq openAIReq = new ChatReq();
-                openAIReq.setResponseText(text.trim());
-                return openAIReq;
+                ChatRes chatRes = new ChatRes();
+                chatRes.setResponseText(text.trim());
+                return chatRes;
             }
 
         } catch (Exception e) {

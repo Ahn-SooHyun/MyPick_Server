@@ -1,8 +1,10 @@
 package kr.co.MyPick_server.Service.loginRegister;
 
 import kr.co.MyPick_server.DAO.loginRegister.LoginDAO;
-import kr.co.MyPick_server.DTO.loginReigster.AutoLoginRes;
 import kr.co.MyPick_server.DTO.loginReigster.LoginDTO;
+import kr.co.MyPick_server.Service.JWT.JWTService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,8 +16,13 @@ import java.util.UUID;
 @Service
 public class LoginService implements LoginServiceImpl{
 
+    Logger logger = LoggerFactory.getLogger(LoginService.class);
+
     @Autowired
     LoginDAO loginDAO;
+
+    @Autowired
+    JWTService jwtService;
 
     @Override
     public LoginDTO login(int IDX) {
@@ -23,6 +30,7 @@ public class LoginService implements LoginServiceImpl{
 
         loginDTO.setTocken(UUID.randomUUID());
 
+        loginDTO.setJWT(jwtService.createJwt(IDX));
 
         return loginDTO;
     }
@@ -30,6 +38,8 @@ public class LoginService implements LoginServiceImpl{
     @Override
     public int autoLoginCheck(String tocken) {
         Map<String, Object> result = loginDAO.autoLogin_Check(tocken);
+
+        logger.info(result.toString());
 
         if (result == null) {
             return -1; // 쿼리 결과가 없을 경우 -1 반환
@@ -48,9 +58,9 @@ public class LoginService implements LoginServiceImpl{
         }
         LocalDateTime tokenDate = timestamp.toLocalDateTime(); // Timestamp를 LocalDateTime으로 변환
 
-        // 현재 시간과 Login_Token_Date 간의 차이를 구해 20분 이상 차이나면 0 반환
-        if (Duration.between(tokenDate, LocalDateTime.now()).toMinutes() >= 20) {
-            return 0; // 20분 이상 차이나면 0 반환
+        // 현재 시간과 Login_Token_Date 간의 차이를 구해 30일 이상 차이나면 0 반환
+        if (Duration.between(tokenDate, LocalDateTime.now()).toDays() >= 30) {
+            return 0; // 30일 이상 차이나면 0 반환
         }
 
         return IDX;

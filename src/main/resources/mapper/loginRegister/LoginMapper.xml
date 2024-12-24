@@ -5,7 +5,7 @@
     <select id="autoLogin_Check" resultType="java.util.Map" parameterType="String">
         SELECT User_IDX, Login_Token_Date
         FROM User
-        WHERE Login_Token = {tocken}
+        WHERE Login_Token = #{tocken}
     </select>
 
 </mapper>

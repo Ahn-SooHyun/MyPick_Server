@@ -54,12 +54,22 @@ dependencies {
 	// https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
 	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.18.2'
 
-	implementation 'org.springframework.boot:spring-boot-starter-security'
+	/* AOP 테스트 */
+	// https://mvnrepository.com/artifact/org.springframework/spring-aop
+	implementation group: 'org.springframework', name: 'spring-aop', version: '6.1.14'
+	// https://mvnrepository.com/artifact/org.springframework/spring-tx
+	implementation group: 'org.springframework', name: 'spring-tx', version: '6.1.14'
+	// https://mvnrepository.com/artifact/org.aspectj/aspectjweaver
+	runtimeOnly group: 'org.aspectj', name: 'aspectjweaver', version: '1.9.22.1'
+
+	//JWT
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
-	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
-	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+	implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
 
 }
+
 
 tasks.named('test') {
 	useJUnitPlatform()

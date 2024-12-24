@@ -14,7 +14,7 @@ public class ChatController {
     private ChatServiceImpl openAIService;
 
     @GetMapping("/ask")
-    public ChatReq askOpenAI(@ModelAttribute ChatRes openAIRes) {
-        return openAIService.getResponse(openAIRes);
+    public ChatRes askOpenAI(@ModelAttribute ChatReq chatReq) {
+        return openAIService.getResponse(chatReq);
     }
 }

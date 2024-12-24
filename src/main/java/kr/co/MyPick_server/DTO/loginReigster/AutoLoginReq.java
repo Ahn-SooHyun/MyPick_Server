@@ -5,8 +5,6 @@ import lombok.Data;
 import java.util.UUID;
 
 @Data
-public class LoginDTO {
-    private UUID tocken;
-    private String JWT;
-
+public class AutoLoginReq {
+    private String tocken;
 }
