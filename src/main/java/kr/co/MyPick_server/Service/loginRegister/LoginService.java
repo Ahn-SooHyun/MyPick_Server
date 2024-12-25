@@ -30,7 +30,11 @@ public class LoginService implements LoginServiceImpl{
 
         loginDTO.setTocken(UUID.randomUUID());
 
-        loginDTO.setJWT(jwtService.createJwt(IDX));
+        Map<String, Object> jwtData = jwtService.createJwt(IDX);
+
+        loginDTO.setJWT((String) jwtData.get("token"));
+
+        logger.info(loginDTO.toString());
 
         return loginDTO;
     }
@@ -38,8 +42,6 @@ public class LoginService implements LoginServiceImpl{
     @Override
     public int autoLoginCheck(String tocken) {
         Map<String, Object> result = loginDAO.autoLogin_Check(tocken);
-
-        logger.info(result.toString());
 
         if (result == null) {
             return -1; // 쿼리 결과가 없을 경우 -1 반환

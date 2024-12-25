@@ -2,9 +2,11 @@ package kr.co.MyPick_server.Service.JWT;
 
 import io.jsonwebtoken.Claims;
 
+import java.util.Map;
+
 public interface JWTServiceImpl {
 
-    String createJwt(int IDX);
+    Map<String, Object> createJwt(int IDX);
 
     Claims validateJwt(String token);
 

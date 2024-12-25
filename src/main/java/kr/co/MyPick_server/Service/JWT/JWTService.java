@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import io.jsonwebtoken.Claims;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+import java.util.Map;
+
 @Service
 public class JWTService implements JWTServiceImpl{
 
@@ -20,20 +22,23 @@ public class JWTService implements JWTServiceImpl{
     @Autowired
     JWTDAO jwtDAO;
 
+    @Autowired
+    private JWTUtil jwtUtil; // JWTUtil 객체 주입
+
     @Override
-    public String createJwt(int IDX) {
+    public Map<String, Object> createJwt(int IDX) {
         JWTReq jwtReq = jwtDAO.JWT_data(IDX);
 
-        logger.info(jwtReq.toString());
+        if (jwtReq == null) {
+            logger.error("Invalid IDX: User not found");
+            throw new IllegalArgumentException("Invalid user ID");
+        }
 
         // JWT 생성
-        String token = new JWTUtil.generateToken(jwtReq); // 비정적 메서드 호출
+        Map<String, Object> result = jwtUtil.generateToken(jwtReq);
 
-        // 생성된 토큰 로그 출력
-        logger.info("Generated Token: {}", token);
-
-        // 토큰 반환
-        return token;
+        // 결과 반환
+        return result;
     }
 
     @Override
