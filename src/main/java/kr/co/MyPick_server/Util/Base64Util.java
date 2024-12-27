@@ -1,10 +1,13 @@
 package kr.co.MyPick_server.Util;
 
+import org.springframework.stereotype.Component;
+
 import java.util.Base64;
 
 /**
  * The Base64Util class provides utility methods for encoding and decoding strings to and from Base64.
  */
+@Component
 public class Base64Util {
 
     /**
@@ -13,7 +16,7 @@ public class Base64Util {
      * @param data The string to encode
      * @return The encoded Base64 string
      */
-    public static String encode(String data) {
+    public String encode(String data) {
         return Base64.getEncoder().encodeToString(data.getBytes());
     }
 
@@ -23,7 +26,7 @@ public class Base64Util {
      * @param data The Base64 string to decode
      * @return The decoded string
      */
-    public static String decode(String data) {
+    public String decode(String data) {
         byte[] decodedBytes = Base64.getDecoder().decode(data);
         return new String(decodedBytes);
     }

@@ -5,7 +5,23 @@
     <select id="autoLogin_Check" resultType="java.util.Map" parameterType="String">
         SELECT User_IDX, Login_Token_Date
         FROM User
-        WHERE Login_Token = #{tocken}
+        WHERE Login_Token = #{tocken} AND Del = 0
     </select>
+
+    <select id="login_Check" resultType="java.util.Map" parameterType="loginReq">
+        SELECT User_IDX, PW
+        FROM User
+        WHERE ID = #{id} AND Del = 0;
+    </select>
+    
+    <update id="login_Update" parameterType="LoginUpdateRes">
+        UPDATE User
+        SET
+            Login_Token = #{tocken},
+            Login_Token_Date = SYSDATE(),
+            JWT_Token = #{JWTKey},
+            JWT_Token_Date = SYSDATE()
+        WHERE User_IDX = #{IDX} AND Del = 0
+    </update>
 
 </mapper>
