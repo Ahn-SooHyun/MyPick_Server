@@ -5,8 +5,9 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 public class IDFoundReq {
@@ -17,6 +18,7 @@ public class IDFoundReq {
 
     @NotNull(message = "Birth date cannot be empty.")
     @Past(message = "Birth date must be a past date.")
-    private Date birth;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate birth;
 
 }
