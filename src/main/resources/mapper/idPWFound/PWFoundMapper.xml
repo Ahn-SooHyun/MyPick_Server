@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.MyPick_server.DAO.idPWFound.PWFoundDAO">
+
+    <select id="PWFound" resultType="int" parameterType="PWFoundReq">
+        SELECT User_IDX
+        FROM User
+        WHERE Del = 0 AND ID = #{id} AND Name = #{name} AND Birth = #{birth}
+    </select>
+    
+    <update id="CodeSave" parameterType="mailSendReq">
+        UPDATE User
+        SET Authentication_Code = #{code}
+        Where Del = 0 AND User_IDX = #{idx};
+    </update>
+
+    <select id="PWFoundCheck" resultType="int" parameterType="PWFoundCheckReq">
+        SELECT User_IDX
+        FROM User
+        WHERE Del = 0 AND Authentication_Code = #{code};
+    </select>
+
+    <update id="PWFoundCheckUpdate" parameterType="CodeUpdateReq">
+        UPDATE User
+        SET Authentication_Code = #{code}
+        Where Del = 0 AND User_IDX = #{idx};
+    </update>
+
+    <update id="PWChange" parameterType="pwChangeReq">
+        UPDATE User
+        SET Authentication_Code = null, PW = #{pw}
+        WHERE Del = 0 AND Authentication_Code = #{code};
+    </update>
+
+</mapper>
