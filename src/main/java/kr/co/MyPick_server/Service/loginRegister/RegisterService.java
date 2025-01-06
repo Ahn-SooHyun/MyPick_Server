@@ -20,9 +20,12 @@ public class RegisterService implements RegisterServiceImpl{
     @Autowired
     RegisterDAO registerDAO;
 
+    Logger logger = LoggerFactory.getLogger(RegisterService.class);
 
     @Override
     public int idCheck(String ID) {
+        ID = base64Util.encode(ID);
+
         return registerDAO.idCheck(ID);
     }
 

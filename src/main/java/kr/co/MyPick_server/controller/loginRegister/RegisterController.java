@@ -20,10 +20,11 @@ public class RegisterController {
     @Autowired
     RegisterService registerService;
 
+    Logger logger = LoggerFactory.getLogger(RegisterController.class);
+
     @GetMapping("/idCheck")
     public ResponseEntity<?> ID_Check(@RequestParam String ID) {
         ResponsData data = new ResponsData();
-
         int result = registerService.idCheck(ID);
 
         if (result != 0) {

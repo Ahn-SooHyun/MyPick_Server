@@ -38,3 +38,8 @@ out/
 
 # Ignore application.properties
 application.properties
+
+# .gitignore 파일
+.env
+*.key
+*.pem
