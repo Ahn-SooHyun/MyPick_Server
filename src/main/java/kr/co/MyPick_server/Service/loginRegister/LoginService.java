@@ -84,7 +84,9 @@ public class LoginService implements LoginServiceImpl{
 
     @Override
     public int loginCheck(LoginReq loginReq) {
+        logger.info(loginReq.toString());
         loginReq.setId(base64Util.encode(loginReq.getId()));
+        loginReq.setPw(base64Util.encode(loginReq.getPw()));
 
         Map<String, Object> result = loginDAO.login_Check(loginReq);
 

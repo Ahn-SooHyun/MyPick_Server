@@ -32,7 +32,7 @@ public class RegisterService implements RegisterServiceImpl{
     @Override
     public int register(RegisterReq registerReq) {
         registerReq.setId(base64Util.encode(registerReq.getId()));
-        registerReq.setPw(bCryptUtil.setPassword(registerReq.getPw()));
+        registerReq.setPw(bCryptUtil.setPassword(base64Util.encode(registerReq.getPw())));
 
         return registerDAO.register(registerReq);
     }

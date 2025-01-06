@@ -27,7 +27,7 @@ public class IDFoundServer implements IDFoundServerImpl{
             return null;
         }
 
-        base64Util.decode(result);
+        result = base64Util.decode(result);
 
         return result;
     }
