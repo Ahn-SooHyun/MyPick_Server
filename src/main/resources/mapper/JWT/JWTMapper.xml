@@ -2,10 +2,22 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.co.MyPick_server.DAO.JWT.JWTDAO">
 
-    <select id="JWT_data" resultType="JWTReq" parameterType="int">
+    <select id="JWTdata" resultType="JWTReq" parameterType="int">
         SELECT ID, PW, Name, Birth, Date_Of_Creation
         FROM User
-        WHERE User_IDX =  #{IDX}
+        WHERE User_IDX = #{IDX}
     </select>
+
+    <select id="JWTCheck" resultType="java.util.Map" parameterType="String">
+        SELECT User_IDX, JWT_Token_Date, JWT_Token
+        FROM User
+        WHERE JWT_Token = #{extractedKey}
+    </select>
+
+    <update id="JWTDateUpdate" parameterType="Integer">
+        UPDATE User
+        SET JWT_Token_Date = SYSDATE()
+        WHERE User_IDX = #{IDX};
+    </update>
 
 </mapper>

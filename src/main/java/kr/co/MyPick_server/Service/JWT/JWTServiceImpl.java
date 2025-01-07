@@ -8,6 +8,6 @@ public interface JWTServiceImpl {
 
     Map<String, Object> createJwt(int IDX);
 
-    Claims validateJwt(String token);
+    String extractKey(String JWT);
 
 }

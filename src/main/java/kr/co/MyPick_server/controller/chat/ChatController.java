@@ -2,19 +2,29 @@ package kr.co.MyPick_server.controller.chat;
 
 import kr.co.MyPick_server.DTO.chat.ChatReq;
 import kr.co.MyPick_server.DTO.chat.ChatRes;
+import kr.co.MyPick_server.Service.JWT.JWTService;
 import kr.co.MyPick_server.Service.chat.ChatServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/openai")
+@RequestMapping("/api/chat")
 public class ChatController {
 
     @Autowired
     private ChatServiceImpl openAIService;
+    @Autowired
+    private JWTService jwtService;
 
-    @GetMapping("/ask")
-    public ChatRes askOpenAI(@ModelAttribute ChatReq chatReq) {
-        return openAIService.getResponse(chatReq);
+    Logger logger = LoggerFactory.getLogger(ChatController.class);
+
+    @GetMapping("/question")
+    public String question(@ModelAttribute ChatReq chatReq) {
+        String result = jwtService.extractKey(chatReq.getJWT());
+//        return openAIService.getResponse(chatReq);
+        return "";
     }
+
 }

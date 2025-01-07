@@ -7,8 +7,6 @@ import kr.co.MyPick_server.DTO.loginReigster.LoginUpdateRes;
 import kr.co.MyPick_server.Service.JWT.JWTService;
 import kr.co.MyPick_server.Util.BCryptUtil;
 import kr.co.MyPick_server.Util.Base64Util;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +17,6 @@ import java.util.UUID;
 
 @Service
 public class LoginService implements LoginServiceImpl{
-
-    Logger logger = LoggerFactory.getLogger(LoginService.class);
 
     @Autowired
     LoginDAO loginDAO;
@@ -42,20 +38,20 @@ public class LoginService implements LoginServiceImpl{
 
         Map<String, Object> jwtData = jwtService.createJwt(IDX);
 
-        loginDTO.setJWT((String) jwtData.get("token"));
+        loginDTO.setJWT((String) jwtData.get("JWT"));
 
         loginUpdateRes.setIDX(IDX);
         loginUpdateRes.setTocken(String.valueOf(loginDTO.getTocken()));
-        loginUpdateRes.setJWTKey((String) jwtData.get("key"));
+        loginUpdateRes.setJWTKey((String) jwtData.get("signature"));
 
-        loginDAO.login_Update(loginUpdateRes);
+        loginDAO.loginUpdate(loginUpdateRes);
 
         return loginDTO;
     }
 
     @Override
     public int autoLoginCheck(String tocken) {
-        Map<String, Object> result = loginDAO.autoLogin_Check(tocken);
+        Map<String, Object> result = loginDAO.autoLoginCheck(tocken);
 
         if (result == null) {
             return -1; // 쿼리 결과가 없을 경우 -1 반환
@@ -84,11 +80,10 @@ public class LoginService implements LoginServiceImpl{
 
     @Override
     public int loginCheck(LoginReq loginReq) {
-        logger.info(loginReq.toString());
         loginReq.setId(base64Util.encode(loginReq.getId()));
         loginReq.setPw(base64Util.encode(loginReq.getPw()));
 
-        Map<String, Object> result = loginDAO.login_Check(loginReq);
+        Map<String, Object> result = loginDAO.loginCheck(loginReq);
 
         if (result == null) {
             return -1; // 쿼리 결과가 없을 경우 -1 반환

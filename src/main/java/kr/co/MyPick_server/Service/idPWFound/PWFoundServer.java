@@ -22,13 +22,11 @@ public class PWFoundServer implements PWFoundServerImpl{
 
     @Autowired
     private MailService mailService;
-
     @Autowired
     private RandomCodeUtil randomCodeUtil;
 
     @Autowired
     private Base64Util base64Util;
-
     @Autowired
     private BCryptUtil bCryptUtil;
 
@@ -67,8 +65,6 @@ public class PWFoundServer implements PWFoundServerImpl{
     public String pwFoundCheckReq(PWFoundCheckReq pwFoundCheckReq) {
         Integer userIDX = pwFoundDAO.PWFoundCheck(pwFoundCheckReq);
         String result = null;
-
-        logger.info(userIDX.toString());
 
         if (userIDX != null) {
             CodeUpdateReq codeUpdateReq = new CodeUpdateReq();

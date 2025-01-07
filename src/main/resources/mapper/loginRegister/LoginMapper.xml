@@ -2,19 +2,19 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.co.MyPick_server.DAO.loginRegister.LoginDAO">
 
-    <select id="autoLogin_Check" resultType="java.util.Map" parameterType="String">
+    <select id="autoLoginCheck" resultType="java.util.Map" parameterType="String">
         SELECT User_IDX, Login_Token_Date
         FROM User
         WHERE Login_Token = #{tocken} AND Del = 0
     </select>
 
-    <select id="login_Check" resultType="java.util.Map" parameterType="loginReq">
+    <select id="loginCheck" resultType="java.util.Map" parameterType="loginReq">
         SELECT User_IDX, PW
         FROM User
         WHERE ID = #{id} AND Del = 0;
     </select>
     
-    <update id="login_Update" parameterType="LoginUpdateRes">
+    <update id="loginUpdate" parameterType="LoginUpdateRes">
         UPDATE User
         SET
             Login_Token = #{tocken},
