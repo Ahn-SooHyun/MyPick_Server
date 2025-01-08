@@ -1,5 +1,6 @@
 package kr.co.MyPick_server.DTO.loginReigster;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 

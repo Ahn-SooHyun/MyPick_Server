@@ -30,7 +30,14 @@ public class RegisterService implements RegisterServiceImpl{
     }
 
     @Override
+    public int nameBirthCheck(RegisterReq registerReq) {
+        int result = registerDAO.nameBirthCheck(registerReq);
+        return result;
+    }
+
+    @Override
     public int register(RegisterReq registerReq) {
+        logger.info(registerReq.toString());
         registerReq.setId(base64Util.encode(registerReq.getId()));
         registerReq.setPw(bCryptUtil.setPassword(base64Util.encode(registerReq.getPw())));
 

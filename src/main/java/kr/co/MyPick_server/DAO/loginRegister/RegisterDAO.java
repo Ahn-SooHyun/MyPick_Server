@@ -19,6 +19,14 @@ public interface RegisterDAO {
     int idCheck(String ID);
 
     /**
+     * Verifies if the provided name and birthdate combination exists in the database.
+     *
+     * @param registerReq An object containing the name and birthdate to be validated.
+     * @return Returns 1 if the combination is valid, otherwise returns 0.
+     */
+    int nameBirthCheck(RegisterReq registerReq);
+
+    /**
      * Registers a new user in the database with the provided information.
      *
      * @param registerReq An object containing the user's registration information,

@@ -10,7 +10,8 @@ import org.springframework.web.bind.annotation.*;
 
 /**
  * The RegisterController class handles user registration and ID duplication checks.
- * It provides endpoints for verifying the uniqueness of user IDs and for creating new accounts.
+ * It provides endpoints for verifying the uniqueness of user IDs, validating user details,
+ * and creating new user accounts.
  */
 @RestController
 @RequestMapping("/api/register")
@@ -45,7 +46,7 @@ public class RegisterController {
 
     /**
      * Handles user registration by validating the provided registration details
-     * and saving them if the ID is unique.
+     * and saving them if the ID and other details are valid.
      *
      * @param registerReq The user registration request containing the required details.
      * @return A ResponseEntity containing a ResponsData object with the registration result.
@@ -56,10 +57,18 @@ public class RegisterController {
         ResponsData data = new ResponsData();
 
         // Check if ID is already in use
-        int check = registerService.idCheck(registerReq.getId());
-        if (check != 0) {
+        int IDCheck = registerService.idCheck(registerReq.getId());
+        if (IDCheck != 0) {
             data.setCode("201"); // Custom error code for ID duplication
             data.setMessage("ID Error.");
+            return ResponseEntity.ok(data);
+        }
+
+        // Validate name and birthdate
+        int nameBirthCheck = registerService.nameBirthCheck(registerReq);
+        if (nameBirthCheck != 0) {
+            data.setCode("202"); // Custom error code for invalid name or birthdate
+            data.setMessage("Name Birth Error.");
             return ResponseEntity.ok(data);
         }
 

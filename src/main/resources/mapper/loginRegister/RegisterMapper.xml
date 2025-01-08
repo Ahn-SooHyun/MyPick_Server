@@ -8,6 +8,12 @@
         WHERE ID = #{param};
     </select>
 
+    <select id="nameBirthCheck" resultType="int" parameterType="RegisterReq">
+        SELECT COUNT(ID)
+        FROM User
+        WHERE Name = #{name} AND Birth = #{birth};
+    </select>
+
     <insert id="register" parameterType="RegisterReq">
         INSERT INTO User(ID, PW, Name, NickName, Birth, Category, Del)
         VALUES (#{id}, #{pw}, #{name}, #{nickName}, #{birth}, '음악', 0)
