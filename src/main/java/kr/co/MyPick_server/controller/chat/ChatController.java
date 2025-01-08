@@ -25,10 +25,19 @@ public class ChatController {
     public ResponseEntity<?> question(@ModelAttribute ChatReq chatReq) {
         ResponsData data = new ResponsData();
 
-        int result = jwtService.extractKey(chatReq.getJWT());
+        int result = jwtService.extractKey(chatReq.getCT_AT());
         if (result == -1) {
-
+            data.setCode("401");
+            data.setMessage("CT_AT does not exist.");
+            return ResponseEntity.ok(data);
         }
+        if (result == 0) {
+            data.setCode("402");
+            data.setMessage("Your time has expired.");
+            return ResponseEntity.ok(data);
+        }
+
+
 
         return ResponseEntity.ok(data);
     }

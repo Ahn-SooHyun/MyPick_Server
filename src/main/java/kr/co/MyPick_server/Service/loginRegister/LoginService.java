@@ -38,7 +38,7 @@ public class LoginService implements LoginServiceImpl{
 
         Map<String, Object> jwtData = jwtService.createJwt(IDX);
 
-        loginDTO.setJWT((String) jwtData.get("JWT"));
+        loginDTO.setCT_AT((String) jwtData.get("JWT"));
 
         loginUpdateRes.setIDX(IDX);
         loginUpdateRes.setTocken(String.valueOf(loginDTO.getTocken()));

@@ -7,6 +7,6 @@ import java.util.UUID;
 @Data
 public class LoginDTO {
     private UUID tocken;
-    private String JWT;
+    private String CT_AT;
 
 }
