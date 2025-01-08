@@ -44,4 +44,5 @@ application.properties
 
 # JWT
 # dynamicKey.txt 파일 무시
-/config/dynamicKey.txt
+src/main/java/kr/co/MyPick_server/config/dynamicKey.txt
+
