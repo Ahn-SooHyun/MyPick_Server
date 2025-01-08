@@ -5,12 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * The BCryptService class provides methods for encrypting and verifying passwords using
- * Base64 encoding and BCrypt hashing.
+ * The BCryptUtil class provides methods for securely encrypting passwords using
+ * Base64 encoding combined with BCrypt hashing and verifying passwords.
  */
 @Component
 public class BCryptUtil {
-
 
     @Autowired
     Base64Util base64Util;
@@ -18,25 +17,33 @@ public class BCryptUtil {
     /**
      * Encrypts the given password using Base64 encoding and BCrypt hashing.
      *
-     * @param password The plain text password to be encrypted
-     * @return The encrypted password as a BCrypt hash
+     * This method first encodes the password using Base64, ensuring an additional layer
+     * of obfuscation, and then hashes it using BCrypt to store securely in the database.
+     *
+     * @param password The plain text password to be encrypted.
+     * @return The encrypted password as a BCrypt hash.
      */
-    // 비밀번호 암호화
     public String setPassword(String password) {
+        // Base64 encoding of the password
         String basePW = base64Util.encode(password);
+        // BCrypt hashing
         return BCrypt.hashpw(basePW, BCrypt.gensalt());
     }
 
     /**
-     * Checks if the provided plain text password matches the stored hashed password.
+     * Verifies if the provided plain text password matches the hashed password stored in the database.
+     *
+     * This method ensures that the password provided by the user is valid by applying
+     * the same Base64 encoding and comparing it against the stored BCrypt hash.
      *
      * @param password The plain text password to be verified.
      * @param dbPassword The hashed password stored in the database.
      * @return true if the provided password matches the stored password, false otherwise.
      */
-    //비밀번호 체크하기
     public boolean checkPassword(String password, String dbPassword) {
+        // Base64 encoding of the password
         String basePW = base64Util.encode(password);
+        // BCrypt password verification
         return BCrypt.checkpw(basePW, dbPassword);
     }
 }

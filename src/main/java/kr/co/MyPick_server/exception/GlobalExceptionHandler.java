@@ -12,35 +12,43 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import java.util.stream.Collectors;
 
 /**
- * GlobalExceptionHandler is a controller advice class for handling exceptions globally
- * across the whole application. It provides centralized exception handling and
- * ensures consistent error responses.
+ * The GlobalExceptionHandler class provides centralized exception handling for the application.
+ * It ensures consistent error responses and simplifies error management across all controllers.
  */
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    // Logger for capturing error details
     Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     /**
-     * Handles the MethodArgumentNotValidException and constructs a response entity with error details.
+     * Handles validation errors caused by invalid method arguments.
      *
-     * @param ex the MethodArgumentNotValidException thrown when validation on an argument fails
-     * @return a ResponseEntity containing a ResponsData object with error details and HTTP status BAD_REQUEST (400)
+     * This method is triggered when a MethodArgumentNotValidException is thrown, typically
+     * during validation of request body or parameters. It constructs a custom error response
+     * with detailed validation messages.
+     *
+     * @param ex The MethodArgumentNotValidException thrown when validation on an argument fails.
+     * @return A ResponseEntity containing a ResponsData object with error details and
+     *         an HTTP status code of BAD_REQUEST (400).
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ResponsData> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+        // Create a response object with error details
         ResponsData data = new ResponsData();
-        data.setCode("500");
-        data.setMessage("Validation error");
+        data.setCode("500"); // Set the error code to indicate failure
+        data.setMessage("Validation error"); // General error message
 
+        // Collect all validation error messages
         String errors = ex.getBindingResult().getAllErrors()
                 .stream()
                 .map(error -> error.getDefaultMessage())
                 .collect(Collectors.joining(", "));
 
+        // Log the error details
         logger.error(errors);
 
+        // Return the response entity with BAD_REQUEST status and error details
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(data);
     }
 }
-

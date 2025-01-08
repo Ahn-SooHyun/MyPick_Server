@@ -6,6 +6,7 @@ import kr.co.MyPick_server.DTO.eMail.MailSendReq;
 import kr.co.MyPick_server.DTO.idPWFound.PWChangeReq;
 import kr.co.MyPick_server.DTO.idPWFound.PWFoundReq;
 import kr.co.MyPick_server.DTO.idPWFound.PWFoundCheckReq;
+import kr.co.MyPick_server.Service.Mail.MailService;
 import kr.co.MyPick_server.Util.BCryptUtil;
 import kr.co.MyPick_server.Util.Base64Util;
 import kr.co.MyPick_server.Util.RandomCodeUtil;

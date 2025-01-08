@@ -7,24 +7,25 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
- * Configuration class to customize the default Spring Web MVC settings.
- * Implements WebMvcConfigurer to provide custom configurations such as CORS mappings.
+ * The WebConfig class is a configuration class that customizes the default Spring Web MVC settings.
+ * It implements WebMvcConfigurer to define custom configurations such as CORS mappings.
  */
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
+    // Logger to log information related to web configurations
     Logger logger = LoggerFactory.getLogger(WebConfig.class);
 
     /**
-     * Overrides the default method to add custom CORS mappings.
+     * Configures Cross-Origin Resource Sharing (CORS) settings.
+     * This method allows requests from any origin to access all API endpoints, which is useful
+     * for development or when the API needs to be accessed by clients from different domains.
      *
-     * @param registry the CorsRegistry to configure CORS settings
+     * @param registry The CorsRegistry to define CORS configurations.
      */
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")  // 모든 경로에 대해 CORS를 허용
-                .allowedOriginPatterns("*");
+        registry.addMapping("/**")  // Allows CORS for all URL paths
+                .allowedOriginPatterns("*"); // Allows requests from any origin
     }
-
-
 }

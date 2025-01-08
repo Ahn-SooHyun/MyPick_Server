@@ -3,26 +3,28 @@ package kr.co.MyPick_server.Util;
 import lombok.Data;
 
 /**
- * The ResponsData class is a data structure for representing response messages in a standardized way.
- * It contains fields for a status code, a message, and an optional data payload.
+ * The ResponsData class is a standardized structure for API response messages.
+ * It includes a status code, a message describing the response, and an optional
+ * data payload for additional information.
  *
- * The default constructor initializes the object with a success code and message.
+ * This class uses Lombok's @Data annotation to automatically generate getters,
+ * setters, and other utility methods.
  */
 @Data
 public class ResponsData {
 
-    private String code; //성공:200, 실패: 500.
-    private String message; //에러내역 ( properties에서 관리 )
+    private String code; // Response status code ("200" for success, "500" for failure).
+    private String message; // Descriptive message about the response (e.g., error details).
 
-    private Object data; // response 값을 담는다.
+    private Object data; // Optional payload containing the response data.
 
     /**
-     * Initializes a new instance of the ResponsData class with default values.
-     * Sets the response code to "200" indicating success and the message to "success".
+     * Default constructor initializes the response object with default success values.
+     * - Code is set to "200", indicating a successful response.
+     * - Message is set to "success".
      */
-    //default 설정 성공
     public ResponsData() {
-        this.code = "200"; //성공 코드
-        this.message = "success";
+        this.code = "200"; // Default success code.
+        this.message = "success"; // Default success message.
     }
 }

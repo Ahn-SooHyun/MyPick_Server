@@ -1,4 +1,4 @@
-package kr.co.MyPick_server.Service.idPWFound;
+package kr.co.MyPick_server.Service.Mail;
 
 import kr.co.MyPick_server.DTO.eMail.MailSendReq;
 import kr.co.MyPick_server.Util.MailUtil;
