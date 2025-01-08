@@ -22,7 +22,7 @@ public class ChatController {
 
     @GetMapping("/question")
     public String question(@ModelAttribute ChatReq chatReq) {
-        String result = jwtService.extractKey(chatReq.getJWT());
+        int result = jwtService.extractKey(chatReq.getJWT());
 //        return openAIService.getResponse(chatReq);
         return "";
     }

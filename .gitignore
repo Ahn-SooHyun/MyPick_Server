@@ -38,8 +38,10 @@ out/
 
 # Ignore application.properties
 application.properties
-
-# .gitignore 파일
 .env
 *.key
 *.pem
+
+# JWT
+# dynamicKey.txt 파일 무시
+/config/dynamicKey.txt

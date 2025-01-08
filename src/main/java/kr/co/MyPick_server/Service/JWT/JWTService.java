@@ -40,22 +40,13 @@ public class JWTService implements JWTServiceImpl{
     }
 
     @Override
-    public String extractKey(String JWT) {
-        try {
-            // JWT에서 header를 추출하고 key 복원
-            String[] JWTParts = JWT.split("\\.");
-            if (JWTParts.length != 3) {
-                throw new IllegalArgumentException("Invalid JWT structure");
-            }
+    public Integer extractKey(String JWT) {
+        String keyPart = jwtUtil.extractKey(JWT);
 
-            // JWT 헤더와 payload는 Base64로 인코딩된 상태이므로 디코딩
-            String keyPart = JWTParts[2]; // 서명 부분 추출
-            logger.info("Decoded key: " + keyPart);
-            return keyPart;
-        } catch (Exception e) {
-            logger.error("Failed to extract key from JWT: {}", JWT, e);
-            throw new IllegalArgumentException("Failed to extract key from JWT", e);
-        }
+
+
+
+        return 0;
     }
 
 

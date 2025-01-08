@@ -6,12 +6,12 @@ import jakarta.annotation.PostConstruct;
 import kr.co.MyPick_server.DTO.JWT.JWTReq;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.security.Key;
@@ -23,34 +23,33 @@ import java.util.Map;
 @Component
 public class JWTUtil {
 
-    @Autowired
-    Base64Util base64Util;
-
-    Logger logger = LoggerFactory.getLogger(JWTUtil.class);
-
     private static final SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS256;
     private static final long EXPIRATION_TIME = 86400000L; // 1일 (밀리초)
-    private static final String KEY_FILE_PATH = "config/dynamicKey.txt"; // 키 파일 경로
+    private static final String KEY_FILE_PATH = "src/main/java/kr/co/MyPick_server/config/dynamicKey.txt"; // 키 파일 경로
 
     private Key fixedKey;
+
+    private final Logger logger = LoggerFactory.getLogger(JWTUtil.class);
 
     // 서버 시작 시 고정 키 생성
     @PostConstruct
     public void initializeSecretKey() {
         try {
-            if (Files.exists(Paths.get(KEY_FILE_PATH))) {
+            Path path = Paths.get(KEY_FILE_PATH);
+
+            if (Files.exists(path)) {
                 // 파일에서 키 읽기
-                String keyString = new String(Files.readAllBytes(Paths.get(KEY_FILE_PATH))).trim();
+                String keyString = new String(Files.readAllBytes(path)).trim();
                 byte[] keyBytes = Base64.getDecoder().decode(keyString);
                 fixedKey = new SecretKeySpec(keyBytes, SIGNATURE_ALGORITHM.getJcaName());
-                logger.info("Secret key successfully loaded from file.");
+                logger.info("Secret key successfully loaded from file: {}", KEY_FILE_PATH);
             } else {
-                // 키 생성 및 파일에 저장
+                // 파일 생성 및 키 저장
                 byte[] keyBytes = generateSecretKey();
                 String keyString = Base64.getEncoder().encodeToString(keyBytes);
-                Files.write(Paths.get(KEY_FILE_PATH), keyString.getBytes(), StandardOpenOption.CREATE_NEW);
+                Files.write(path, keyString.getBytes(), StandardOpenOption.CREATE_NEW);
                 fixedKey = new SecretKeySpec(keyBytes, SIGNATURE_ALGORITHM.getJcaName());
-                logger.info("Secret key successfully generated and saved to file.");
+                logger.info("Secret key successfully generated and saved to file: {}", KEY_FILE_PATH);
             }
         } catch (IOException e) {
             logger.error("Failed to load or create secret key file: {}", e.getMessage());
@@ -87,9 +86,6 @@ public class JWTUtil {
         result.put("JWT", JWT);
         result.put("signature", signature);
 
-        logger.info("Generated Token: {}", JWT);
-        logger.info("Extracted Signature: {}", signature);
-
         return result;
     }
 
@@ -103,7 +99,6 @@ public class JWTUtil {
 
             // JWT 헤더와 payload는 Base64로 인코딩된 상태이므로 디코딩
             String keyPart = JWTParts[2]; // 서명 부분 추출
-            logger.info("Decoded key: " + keyPart);
             return keyPart;
         } catch (Exception e) {
             logger.error("Failed to extract key from JWT: {}", JWT, e);
