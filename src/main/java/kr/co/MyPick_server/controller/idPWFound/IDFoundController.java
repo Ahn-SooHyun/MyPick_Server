@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import kr.co.MyPick_server.DTO.idPWFound.IDFoundReq;
 import kr.co.MyPick_server.Service.idPWFound.IDFoundServer;
 import kr.co.MyPick_server.Util.ResponsData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +24,8 @@ public class IDFoundController {
     @Autowired
     IDFoundServer idFoundServer;
 
+    Logger logger = LoggerFactory.getLogger(IDFoundController.class);
+
     /**
      * Handles requests to find a user ID based on the provided information.
      *
@@ -31,6 +35,9 @@ public class IDFoundController {
      */
     @PostMapping("/idFound")
     public ResponseEntity<?> idFound(@RequestBody @Valid IDFoundReq idFoundReq) {
+        logger.info("===================================================");
+        logger.info("idFound");
+        logger.info("idFoundReq : {}", idFoundReq);
         ResponsData data = new ResponsData();
 
         // Call the service to find the user ID

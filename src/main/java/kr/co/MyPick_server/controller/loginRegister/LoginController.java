@@ -5,6 +5,8 @@ import kr.co.MyPick_server.DTO.loginReigster.AutoLoginReq;
 import kr.co.MyPick_server.DTO.loginReigster.LoginReq;
 import kr.co.MyPick_server.Service.loginRegister.LoginService;
 import kr.co.MyPick_server.Util.ResponsData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +22,8 @@ public class LoginController {
     @Autowired
     private LoginService loginService;
 
+    Logger logger = LoggerFactory.getLogger(LoginController.class);
+
     /**
      * Handles auto-login requests by validating the provided token.
      *
@@ -28,6 +32,9 @@ public class LoginController {
      */
     @PostMapping("/autoLogin")
     public ResponseEntity<?> autoLogin(@RequestBody AutoLoginReq autoLoginReq) {
+        logger.info("===================================================");
+        logger.info("autoLogin");
+        logger.info("autoLoginReq: {}", autoLoginReq);
         ResponsData data = new ResponsData();
 
         // Check the validity of the auto-login token
@@ -57,6 +64,9 @@ public class LoginController {
      */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid LoginReq loginReq) {
+        logger.info("===================================================");
+        logger.info("login");
+        logger.info("loginReq: {}", loginReq);
         ResponsData data = new ResponsData();
 
         // Check the validity of the login credentials

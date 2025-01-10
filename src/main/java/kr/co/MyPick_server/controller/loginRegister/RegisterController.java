@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import kr.co.MyPick_server.DTO.loginReigster.RegisterReq;
 import kr.co.MyPick_server.Service.loginRegister.RegisterService;
 import kr.co.MyPick_server.Util.ResponsData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +22,8 @@ public class RegisterController {
     @Autowired
     RegisterService registerService;
 
+    Logger logger = LoggerFactory.getLogger(RegisterController.class);
+
     /**
      * Checks if the given user ID is already in use.
      *
@@ -28,7 +32,10 @@ public class RegisterController {
      *         If the ID is already in use, the response includes an error code and message.
      */
     @GetMapping("/idCheck")
-    public ResponseEntity<?> ID_Check(@RequestParam String ID) {
+    public ResponseEntity<?> idCheck(@RequestParam String ID) {
+        logger.info("===================================================");
+        logger.info("idCheck");
+        logger.info("ID: {}", ID);
         ResponsData data = new ResponsData();
 
         int result = registerService.idCheck(ID);
@@ -54,6 +61,9 @@ public class RegisterController {
      */
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody @Valid RegisterReq registerReq) {
+        logger.info("===================================================");
+        logger.info("register");
+        logger.info("registerReq: {}", registerReq);
         ResponsData data = new ResponsData();
 
         // Check if ID is already in use

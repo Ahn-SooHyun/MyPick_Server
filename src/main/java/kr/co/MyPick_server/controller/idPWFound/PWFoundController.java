@@ -6,6 +6,8 @@ import kr.co.MyPick_server.DTO.idPWFound.PWFoundReq;
 import kr.co.MyPick_server.DTO.idPWFound.PWFoundCheckReq;
 import kr.co.MyPick_server.Service.idPWFound.PWFoundServer;
 import kr.co.MyPick_server.Util.ResponsData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,6 +27,8 @@ public class PWFoundController {
     @Autowired
     PWFoundServer pwFoundServer;
 
+    Logger logger = LoggerFactory.getLogger(PWFoundController.class);
+
     /**
      * Handles password recovery requests by validating user information.
      *
@@ -34,6 +38,9 @@ public class PWFoundController {
      */
     @PostMapping("/pwFound")
     public ResponseEntity<?> pwFound(@RequestBody @Valid PWFoundReq pwFoundReq) {
+        logger.info("===================================================");
+        logger.info("pwFound");
+        logger.info("pwFoundReq : {}", pwFoundReq);
         ResponsData data = new ResponsData();
 
         int result = pwFoundServer.pwFound(pwFoundReq);
