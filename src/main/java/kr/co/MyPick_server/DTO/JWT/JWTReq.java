@@ -7,6 +7,7 @@ import java.util.Date;
 
 @Data
 public class JWTReq {
+    private int admin;
     private String id;
     private String pw;
     private String name;

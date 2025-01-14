@@ -3,7 +3,7 @@
 <mapper namespace="kr.co.MyPick_server.DAO.JWT.JWTDAO">
 
     <select id="JWTdata" resultType="JWTReq" parameterType="int">
-        SELECT ID, PW, Name, Birth, Date_Of_Creation
+        SELECT ID, PW, Name, Birth, Date_Of_Creation, General
         FROM User
         WHERE User_IDX = #{IDX}
     </select>

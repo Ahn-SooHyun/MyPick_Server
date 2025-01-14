@@ -2,10 +2,45 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.co.MyPick_server.DAO.Chat.ChatDAO">
 
-    <select id="ChatListGet" resultType="ChatListDTO" parameterType="int">
+    <select id="ChatRoomListGet" resultType="ChatRoomListDTO" parameterType="int">
         SELECT Chat_IDX, Category, Summary, Last_Date
         FROM Chat_List
         WHERE Del = 0 AND User_IDX = #{IDX};
     </select>
+
+    <insert id="ChatRoomCreate" parameterType="ChatRoomCreateReq">
+        INSERT INTO Chat_List(User_IDX, Category, Last_Date, Del)
+        VALUES (#{IDX}, #{category}, SYSDATE(), 0);
+    </insert>
+
+    <select id="ChatRoomLastIDXGet" resultType="int" parameterType="int">
+        SELECT MAX(Chat_IDX) AS Last_Chat_IDX
+        FROM Chat_List
+        WHERE User_IDX = #{IDX};
+    </select>
+
+    <select id="ChatRoomCategoryGet" resultType="String" parameterType="int">
+        SELECT Category
+        FROM Chat_List
+        WHERE Chat_IDX = #{chatIDX};
+    </select>
+
+    <select id="ChatRoomIDXGet" resultType="int" parameterType="ChatMessageListGetReq">
+        SELECT Chat_IDX
+        FROM Chat_List
+        WHERE Del = 0 AND Chat_IDX = #{chatIDX} AND User_IDX = #{userIDX};
+    </select>
+
+    <update id="ChatRoomUpdate" parameterType="ChatMessageMongoReq">
+        UPDATE Chat_List
+        SET Summary = #{summary}, Last_Date = SYSDATE()
+        WHERE Del = 0 AND User_IDX = #{userIdx} AND Chat_IDX = #{chatIdx};
+    </update>
+    
+    <update id="ChatRoomDelete" parameterType="ChatMessageListGetReq">
+        UPDATE Chat_List
+        SET Del = 1
+        WHERE Del = 0 AND User_IDX = #{userIDX} AND Chat_IDX = #{chatIDX};
+    </update>
 
 </mapper>

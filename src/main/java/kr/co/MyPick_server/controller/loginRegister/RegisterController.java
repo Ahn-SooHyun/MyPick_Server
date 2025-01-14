@@ -42,7 +42,7 @@ public class RegisterController {
 
         // If ID already exists, return error response
         if (result != 0) {
-            data.setCode("201"); // Custom error code for ID duplication
+            data.setCode("510"); // Custom error code for ID duplication
             data.setMessage("ID Error.");
             return ResponseEntity.ok(data);
         }
@@ -69,7 +69,7 @@ public class RegisterController {
         // Check if ID is already in use
         int IDCheck = registerService.idCheck(registerReq.getId());
         if (IDCheck != 0) {
-            data.setCode("201"); // Custom error code for ID duplication
+            data.setCode("510"); // Custom error code for ID duplication
             data.setMessage("ID Error.");
             return ResponseEntity.ok(data);
         }
@@ -77,7 +77,7 @@ public class RegisterController {
         // Validate name and birthdate
         int nameBirthCheck = registerService.nameBirthCheck(registerReq);
         if (nameBirthCheck != 0) {
-            data.setCode("202"); // Custom error code for invalid name or birthdate
+            data.setCode("511"); // Custom error code for invalid name or birthdate
             data.setMessage("Name Birth Error.");
             return ResponseEntity.ok(data);
         }
@@ -87,7 +87,7 @@ public class RegisterController {
 
         // Handle registration failure
         if (result == 0) {
-            data.setCode("401"); // Custom error code for registration failure
+            data.setCode("512"); // Custom error code for registration failure
             data.setMessage("Register does not exist.");
             return ResponseEntity.ok(data);
         }

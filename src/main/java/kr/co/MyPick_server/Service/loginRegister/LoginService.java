@@ -7,6 +7,8 @@ import kr.co.MyPick_server.DTO.loginReigster.LoginUpdateRes;
 import kr.co.MyPick_server.Service.JWT.JWTService;
 import kr.co.MyPick_server.Util.BCryptUtil;
 import kr.co.MyPick_server.Util.Base64Util;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,10 +31,20 @@ public class LoginService implements LoginServiceImpl{
     @Autowired
     BCryptUtil bCryptUtil;
 
+    Logger logger = LoggerFactory.getLogger(LoginService.class);
+
     @Override
     public LoginDTO login(int IDX) {
         LoginDTO loginDTO = new LoginDTO();
         LoginUpdateRes loginUpdateRes = new LoginUpdateRes();
+
+        String General = loginDAO.GeneralCheck(IDX);
+        if (!General.equals("0")) {
+            loginUpdateRes.setGeneral(String.valueOf(UUID.randomUUID()));
+        }
+        else {
+            loginUpdateRes.setGeneral("0");
+        }
 
         loginDTO.setTocken(UUID.randomUUID());
 
@@ -43,6 +55,8 @@ public class LoginService implements LoginServiceImpl{
         loginUpdateRes.setIDX(IDX);
         loginUpdateRes.setTocken(String.valueOf(loginDTO.getTocken()));
         loginUpdateRes.setJWTKey((String) jwtData.get("signature"));
+
+        logger.info(loginUpdateRes.toString());
 
         loginDAO.loginUpdate(loginUpdateRes);
 
@@ -75,6 +89,12 @@ public class LoginService implements LoginServiceImpl{
             return 0; // 30일 이상 차이나면 0 반환
         }
 
+        // Account_Suspension 확인
+        java.sql.Timestamp suspensionTimestamp = (java.sql.Timestamp) result.get("Account_Suspension");
+        if (suspensionTimestamp != null && suspensionTimestamp.toLocalDateTime().isAfter(LocalDateTime.now())) {
+            return -2; // Account_Suspension 값이 현재 시간보다 크면 -2 반환
+        }
+
         return IDX;
     }
 
@@ -93,6 +113,12 @@ public class LoginService implements LoginServiceImpl{
         Integer IDX = (Integer) result.get("User_IDX");
         if (IDX == null) {
             return -1;
+        }
+
+        // Account_Suspension 확인
+        java.sql.Timestamp suspensionTimestamp = (java.sql.Timestamp) result.get("Account_Suspension");
+        if (suspensionTimestamp != null && suspensionTimestamp.toLocalDateTime().isAfter(LocalDateTime.now())) {
+            return -2; // Account_Suspension 값이 현재 시간보다 크면 -2 반환
         }
 
         if (bCryptUtil.checkPassword(loginReq.getPw(), (String) result.get("PW"))) {

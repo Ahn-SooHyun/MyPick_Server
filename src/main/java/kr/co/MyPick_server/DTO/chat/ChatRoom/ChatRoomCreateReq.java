@@ -1,9 +1,9 @@
-package kr.co.MyPick_server.DTO.chat;
+package kr.co.MyPick_server.DTO.chat.ChatRoom;
 
 import lombok.Data;
 
 @Data
-public class CategoryChangeReq {
+public class ChatRoomCreateReq {
     private int IDX;
     private String category;
 }

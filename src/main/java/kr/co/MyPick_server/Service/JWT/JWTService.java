@@ -26,6 +26,7 @@ public class JWTService implements JWTServiceImpl{
     @Override
     public Map<String, Object> createJwt(int IDX) {
         JWTReq jwtReq = jwtDAO.JWTdata(IDX);
+        logger.info(jwtReq.toString());
 
         if (jwtReq == null) {
             logger.error("Invalid IDX: User not found");
@@ -60,6 +61,9 @@ public class JWTService implements JWTServiceImpl{
         if (Duration.between(tokenDate, LocalDateTime.now()).toMinutes() >= 20) {
             return 0; // 30일 이상 차이나면 0 반환
         }
+
+        logger.info(result.toString());
+
         jwtDAO.JWTDateUpdate((Integer) result.get("User_IDX"));
 
         return (Integer) result.get("User_IDX");

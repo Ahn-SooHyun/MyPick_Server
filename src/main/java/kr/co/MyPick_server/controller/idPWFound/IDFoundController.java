@@ -45,7 +45,7 @@ public class IDFoundController {
 
         // If no ID is found, return an error response
         if (result == null) {
-            data.setCode("401"); // Error code for ID not found
+            data.setCode("520"); // Error code for ID not found
             data.setMessage("ID not found");
             return ResponseEntity.ok(data);
         }

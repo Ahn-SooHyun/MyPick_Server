@@ -15,8 +15,8 @@
     </select>
 
     <insert id="register" parameterType="RegisterReq">
-        INSERT INTO User(ID, PW, Name, NickName, Birth, Category, Del)
-        VALUES (#{id}, #{pw}, #{name}, #{nickName}, #{birth}, '음악', 0)
+        INSERT INTO User(ID, PW, Name, NickName, Birth, General, Account_Suspension, Del)
+        VALUES (#{id}, #{pw}, #{name}, #{nickName}, #{birth}, 0, SYSDATE(), 0)
     </insert>
 
 </mapper>

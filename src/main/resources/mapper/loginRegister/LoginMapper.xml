@@ -3,13 +3,13 @@
 <mapper namespace="kr.co.MyPick_server.DAO.loginRegister.LoginDAO">
 
     <select id="autoLoginCheck" resultType="java.util.Map" parameterType="String">
-        SELECT User_IDX, Login_Token_Date
+        SELECT User_IDX, Login_Token_Date, Account_Suspension
         FROM User
-        WHERE Login_Token = #{tocken} AND Del = 0
+        WHERE Login_Token = #{tocken} AND Del = 0;
     </select>
 
     <select id="loginCheck" resultType="java.util.Map" parameterType="loginReq">
-        SELECT User_IDX, PW
+        SELECT User_IDX, PW, Account_Suspension
         FROM User
         WHERE ID = #{id} AND Del = 0;
     </select>
@@ -20,8 +20,15 @@
             Login_Token = #{tocken},
             Login_Token_Date = SYSDATE(),
             JWT_Token = #{JWTKey},
-            JWT_Token_Date = SYSDATE()
+            JWT_Token_Date = SYSDATE(),
+            General = #{General}
         WHERE User_IDX = #{IDX} AND Del = 0
     </update>
+
+    <select id="GeneralCheck" resultType="String" parameterType="int">
+        SELECT General
+        FROM User
+        WHERE Del = 0 AND User_IDX = #{IDX};
+    </select>
 
 </mapper>

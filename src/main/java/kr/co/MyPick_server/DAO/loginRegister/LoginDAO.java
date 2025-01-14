@@ -32,4 +32,6 @@ public interface LoginDAO {
      * @param loginUpdateRes An object containing the data to be updated for the user's login information.
      */
     void loginUpdate(LoginUpdateRes loginUpdateRes);
+
+    String GeneralCheck(int IDX);
 }

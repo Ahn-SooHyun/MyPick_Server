@@ -9,8 +9,8 @@ import java.time.LocalDate;
 @Data
 public class PWChangeReq {
 
-    @NotBlank(message = "ID cannot be empty.")
-    @Size(min = 8, max = 30, message = "ID must be between 8 and 30 characters.")
+    @NotBlank(message = "Code cannot be empty.")
+    @Size(min = 8, max = 30, message = "Code must be between 8 and 30 characters.")
     private String code;
 
     @NotBlank(message = "Password cannot be empty.")

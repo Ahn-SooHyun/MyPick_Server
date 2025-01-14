@@ -40,13 +40,13 @@ public class PWFoundController {
     public ResponseEntity<?> pwFound(@RequestBody @Valid PWFoundReq pwFoundReq) {
         logger.info("===================================================");
         logger.info("pwFound");
-        logger.info("pwFoundReq : {}", pwFoundReq);
+        logger.info("PWFoundReq : {}", pwFoundReq);
         ResponsData data = new ResponsData();
 
         int result = pwFoundServer.pwFound(pwFoundReq);
 
         if (result == 0) {
-            data.setCode("201"); // Error code for user not found
+            data.setCode("521"); // Error code for user not found
             data.setMessage("User not found");
             return ResponseEntity.ok(data);
         }
@@ -62,9 +62,16 @@ public class PWFoundController {
      */
     @PostMapping("/pwFoundCheck")
     public ResponseEntity<?> pwFoundCheck(@RequestBody @Valid PWFoundCheckReq pwFoundCheckReq) {
+        logger.info("===================================================");
+        logger.info("pwFoundCheck");
+        logger.info("PWFoundCheckReq : {}", pwFoundCheckReq);
         ResponsData data = new ResponsData();
 
         String result = pwFoundServer.pwFoundCheckReq(pwFoundCheckReq);
+        if (result == null) {
+            data.setCode("522");
+            data.setMessage("User not found");
+        }
 
         data.setData(result);
 
@@ -80,12 +87,15 @@ public class PWFoundController {
      */
     @PostMapping("/pwChange")
     public ResponseEntity<?> pwChange(@RequestBody @Valid PWChangeReq pwChangeReq) {
+        logger.info("===================================================");
+        logger.info("pwChange");
+        logger.info("PWChangeReq : {}", pwChangeReq);
         ResponsData data = new ResponsData();
 
         int result = pwFoundServer.pwChange(pwChangeReq);
 
         if (result == 0) {
-            data.setCode("201"); // Error code for password change failure
+            data.setCode("523"); // Error code for password change failure
             data.setMessage("Password not changed");
         }
 

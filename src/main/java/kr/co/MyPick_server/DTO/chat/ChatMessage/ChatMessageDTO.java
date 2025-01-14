@@ -1,4 +1,4 @@
-package kr.co.MyPick_server.DTO.chat;
+package kr.co.MyPick_server.DTO.chat.ChatMessage;
 
 import lombok.Data;
 
@@ -11,8 +11,10 @@ import java.util.List;
  * - list    : 답변 속 게임 목록 ( [리스트] )
  */
 @Data
-public class ChatDTO {
-    private String answer;       // [답변]
-    private String summary;      // [요약]
-    private List<ListInfo> list; // [리스트]
+public class ChatMessageDTO {
+    private String answer;
+
+    private String summary;
+
+    private List<ChatMessageListInfoDTO> list;
 }

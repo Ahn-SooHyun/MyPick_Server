@@ -39,13 +39,18 @@ public class LoginController {
 
         // Check the validity of the auto-login token
         int IDX = loginService.autoLoginCheck(autoLoginReq.getTocken());
+        if (IDX == -2) {
+            data.setCode("509"); // Unauthorized
+            data.setMessage("Your account has been suspended.");
+            return ResponseEntity.ok(data);
+        }
         if (IDX == -1) {
-            data.setCode("401"); // Unauthorized
+            data.setCode("501"); // Unauthorized
             data.setMessage("Auto-login does not exist.");
             return ResponseEntity.ok(data);
         }
         if (IDX == 0) {
-            data.setCode("402"); // Token expired
+            data.setCode("502"); // Token expired
             data.setMessage("Your time has expired.");
             return ResponseEntity.ok(data);
         }
@@ -71,13 +76,18 @@ public class LoginController {
 
         // Check the validity of the login credentials
         int IDX = loginService.loginCheck(loginReq);
+        if (IDX == -2) {
+            data.setCode("509"); // Unauthorized
+            data.setMessage("Your account has been suspended.");
+            return ResponseEntity.ok(data);
+        }
         if (IDX == -1) {
-            data.setCode("401"); // Unauthorized
+            data.setCode("500"); // Unauthorized
             data.setMessage("Login does not exist.");
             return ResponseEntity.ok(data);
         }
         if (IDX == 0) {
-            data.setCode("402"); // Login session expired
+            data.setCode("502"); // Login session expired
             data.setMessage("Your time has expired.");
             return ResponseEntity.ok(data);
         }

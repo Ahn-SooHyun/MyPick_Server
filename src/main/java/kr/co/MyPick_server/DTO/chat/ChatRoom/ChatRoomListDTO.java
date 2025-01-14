@@ -1,11 +1,11 @@
-package kr.co.MyPick_server.DTO.chat;
+package kr.co.MyPick_server.DTO.chat.ChatRoom;
 
 import lombok.Data;
 
 import java.util.Date;
 
 @Data
-public class ChatListDTO {
+public class ChatRoomListDTO {
     private int chatIDX;
     private String category;
     private String Summary;

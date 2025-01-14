@@ -1,4 +1,4 @@
-package kr.co.MyPick_server.DTO.chat;
+package kr.co.MyPick_server.DTO.chat.ChatMessage;
 
 import lombok.Data;
 
@@ -8,7 +8,7 @@ import lombok.Data;
  * - artist : 제작사
  */
 @Data
-public class ListInfo {
+public class ChatMessageListInfoDTO {
     private String title;
     private String creator;
 }

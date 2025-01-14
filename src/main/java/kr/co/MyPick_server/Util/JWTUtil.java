@@ -80,6 +80,7 @@ public class JWTUtil {
     public Map<String, Object> generateToken(JWTReq jwtReq) {
         String JWT = Jwts.builder()
                 .setSubject(jwtReq.getId())
+                .claim("general", jwtReq.getAdmin())
                 .claim("name", jwtReq.getName())
                 .claim("pw", jwtReq.getPw())
                 .claim("birth", jwtReq.getBirth().toString())
