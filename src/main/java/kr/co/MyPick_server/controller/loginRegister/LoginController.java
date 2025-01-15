@@ -25,77 +25,102 @@ public class LoginController {
     Logger logger = LoggerFactory.getLogger(LoginController.class);
 
     /**
-     * Handles auto-login requests by validating the provided token.
+     * Endpoint to verify an auto-login token and retrieve user information.
      *
-     * @param autoLoginReq The auto-login request containing the token to validate.
-     * @return A ResponseEntity containing a ResponsData object with the login result or an error message.
+     * Flow:
+     * - Validates the auto-login token provided by the user.
+     * - Returns a status code and message based on the validity of the token:
+     *   - -2: Account is suspended (code "509")
+     *   - -1: Token is invalid or does not exist (code "501")
+     *   - 0: Token has expired (code "502")
+     *   - > 0: Valid user ID; user data is returned
+     *
+     * @param autoLoginReq The request body containing the auto-login token.
+     * @return A ResponseEntity containing:
+     *         - ResponsData with an error code and message if the token is invalid.
+     *         - ResponsData with user data if the token is valid.
      */
     @PostMapping("/autoLogin")
     public ResponseEntity<?> autoLogin(@RequestBody AutoLoginReq autoLoginReq) {
         logger.info("===================================================");
         logger.info("autoLogin");
         logger.info("autoLoginReq: {}", autoLoginReq);
+
         ResponsData data = new ResponsData();
 
-        // Check the validity of the auto-login token
+        // Validate the auto-login token and determine user state
         int IDX = loginService.autoLoginCheck(autoLoginReq.getTocken());
         if (IDX == -2) {
-            data.setCode("509"); // Unauthorized
+            // User account is suspended
+            data.setCode("509");
             data.setMessage("Your account has been suspended.");
             return ResponseEntity.ok(data);
         }
         if (IDX == -1) {
-            data.setCode("501"); // Unauthorized
+            // Token does not exist or is invalid
+            data.setCode("501");
             data.setMessage("Auto-login does not exist.");
             return ResponseEntity.ok(data);
         }
         if (IDX == 0) {
-            data.setCode("502"); // Token expired
+            // Token has expired
+            data.setCode("502");
             data.setMessage("Your time has expired.");
             return ResponseEntity.ok(data);
         }
 
-        // Retrieve user information and set it in the response
+        // If IDX > 0, the token is valid; retrieve user data
         data.setData(loginService.login(IDX));
-
         return ResponseEntity.ok(data);
     }
 
     /**
-     * Handles user login requests by validating the provided credentials.
+     * Endpoint to handle user login requests by validating the provided credentials.
      *
-     * @param loginReq The login request containing the user's credentials (ID, password).
-     * @return A ResponseEntity containing a ResponsData object with the login result or an error message.
+     * Flow:
+     * - Validates user credentials (ID and password) provided in the request.
+     * - Returns a status code and message based on the validity of the credentials:
+     *   - -2: Account is suspended (code "509")
+     *   - -1: Invalid credentials or user not found (code "500")
+     *   -  0: Login session expired (code "502")
+     *   - > 0: Valid user ID; user data is returned
+     *
+     * @param loginReq The request body containing user credentials (ID and password).
+     * @return A ResponseEntity containing:
+     *         - ResponsData with an error code and message if the login fails.
+     *         - ResponsData with user data if the login is successful.
      */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid LoginReq loginReq) {
         logger.info("===================================================");
         logger.info("login");
         logger.info("loginReq: {}", loginReq);
+
         ResponsData data = new ResponsData();
 
-        // Check the validity of the login credentials
+        // Validate the login credentials
         int IDX = loginService.loginCheck(loginReq);
         if (IDX == -2) {
-            data.setCode("509"); // Unauthorized
+            // User account is suspended
+            data.setCode("509");
             data.setMessage("Your account has been suspended.");
             return ResponseEntity.ok(data);
         }
         if (IDX == -1) {
-            data.setCode("500"); // Unauthorized
+            // Invalid credentials or user not found
+            data.setCode("500");
             data.setMessage("Login does not exist.");
             return ResponseEntity.ok(data);
         }
         if (IDX == 0) {
-            data.setCode("502"); // Login session expired
+            // Session expired
+            data.setCode("502");
             data.setMessage("Your time has expired.");
             return ResponseEntity.ok(data);
         }
 
-        // Retrieve user information and set it in the response
+        // If IDX > 0, credentials are valid; retrieve user data
         data.setData(loginService.login(IDX));
-
         return ResponseEntity.ok(data);
     }
-
 }

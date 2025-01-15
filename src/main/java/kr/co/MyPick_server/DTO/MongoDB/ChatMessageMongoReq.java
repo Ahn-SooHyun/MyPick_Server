@@ -11,21 +11,25 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Data Transfer Object (DTO) for storing and retrieving chat message details from MongoDB.
+ * This class is mapped to the "Chat_List" collection in MongoDB.
+ */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "Chat_List") // MongoDB 컬렉션 이름 설정
+@Document(collection = "Chat_List") // Specify the MongoDB collection name
 public class ChatMessageMongoReq {
 
     @Id
-    private String id;            // MongoDB 문서의 고유 _id
-    private int userIdx; // 유저 IDX
-    private int chatIdx; // 채팅 방 IDX
-    private LocalDateTime date; // 값이 추가된 날짜 시간
-    private String question; // 질문 값
-    private String answer; // 답변 값
-    private String summary;
-    private List<ChatMessageListInfoDTO> list;
+    private String id;            // Unique identifier in MongoDB documents
+    private int userIdx;          // User index associated with the message
+    private int chatIdx;          // Chat room index where the message belongs
+    private LocalDateTime date;   // Date and time when the message was added
+    private String question;      // The question or input from the user
+    private String answer;        // The system-generated answer to the question
+    private String summary;       // A summary or concise version of the conversation if applicable
+    private List<ChatMessageListInfoDTO> list; // List of message details, possibly for extended chat information
 
 }

@@ -11,9 +11,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * The RegisterController class handles user registration and ID duplication checks.
- * It provides endpoints for verifying the uniqueness of user IDs, validating user details,
- * and creating new user accounts.
+ * The RegisterController class manages user registration tasks such as:
+ * 1) Checking if a requested user ID is available (not already in use).
+ * 2) Validating user details (for example, name and birthdate).
+ * 3) Creating a new user account if all validations pass.
+ *
+ * All responses use a common response format (ResponsData), which includes:
+ * - A status or error code (String).
+ * - A descriptive message for the outcome.
+ * - An optional data payload for successful operations.
  */
 @RestController
 @RequestMapping("/api/register")
@@ -25,74 +31,87 @@ public class RegisterController {
     Logger logger = LoggerFactory.getLogger(RegisterController.class);
 
     /**
-     * Checks if the given user ID is already in use.
+     * Checks whether the given user ID is available for new registration or already in use.
      *
-     * @param ID The user ID to check for duplication.
-     * @return A ResponseEntity containing a ResponsData object with the result of the check.
-     *         If the ID is already in use, the response includes an error code and message.
+     * Logic Flow:
+     * - Receive a user ID as a request parameter.
+     * - Call registerService.idCheck(ID) to see if the ID is already registered.
+     * - If the result is not 0, the ID is taken. Set code "510" and message "ID Error.".
+     * - If the result is 0, the ID is available. Return an empty success response.
+     *
+     * @param ID The user ID to check.
+     * @return A ResponseEntity containing a ResponsData object:
+     *         If the ID is taken, code "510" and message "ID Error." are returned.
+     *         Otherwise, an empty (successful) response is returned.
      */
     @GetMapping("/idCheck")
     public ResponseEntity<?> idCheck(@RequestParam String ID) {
         logger.info("===================================================");
-        logger.info("idCheck");
+        logger.info("idCheck - Checking if ID is available");
         logger.info("ID: {}", ID);
+
         ResponsData data = new ResponsData();
 
         int result = registerService.idCheck(ID);
-
-        // If ID already exists, return error response
         if (result != 0) {
-            data.setCode("510"); // Custom error code for ID duplication
+            data.setCode("510");
             data.setMessage("ID Error.");
             return ResponseEntity.ok(data);
         }
 
-        // ID is available
         return ResponseEntity.ok(data);
     }
 
     /**
-     * Handles user registration by validating the provided registration details
-     * and saving them if the ID and other details are valid.
+     * Handles new user registration by checking the requested ID, validating user details,
+     * and creating a new account if all checks pass.
      *
-     * @param registerReq The user registration request containing the required details.
-     * @return A ResponseEntity containing a ResponsData object with the registration result.
-     *         Returns success message on successful registration or an error message otherwise.
+     * Logic Flow:
+     * - Check if the requested ID is available (via idCheck).
+     * - Validate name and birthdate fields (via nameBirthCheck).
+     * - If all validations pass, attempt to register the user (via register).
+     * - If registration fails at any step, return the corresponding error code ("510", "511", or "512").
+     * - If successful, respond with "Register Success".
+     *
+     * @param registerReq A RegisterReq object containing user details such as:
+     *                    - ID
+     *                    - Password
+     *                    - Name
+     *                    - Birthdate
+     *                    - Other necessary fields
+     * @return A ResponseEntity containing:
+     *         - Error codes ("510", "511", "512") with messages if any validation fails.
+     *         - A success message ("Register Success") upon a successful registration.
      */
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody @Valid RegisterReq registerReq) {
         logger.info("===================================================");
         logger.info("register");
         logger.info("registerReq: {}", registerReq);
+
         ResponsData data = new ResponsData();
 
-        // Check if ID is already in use
         int IDCheck = registerService.idCheck(registerReq.getId());
         if (IDCheck != 0) {
-            data.setCode("510"); // Custom error code for ID duplication
+            data.setCode("510");
             data.setMessage("ID Error.");
             return ResponseEntity.ok(data);
         }
 
-        // Validate name and birthdate
         int nameBirthCheck = registerService.nameBirthCheck(registerReq);
         if (nameBirthCheck != 0) {
-            data.setCode("511"); // Custom error code for invalid name or birthdate
+            data.setCode("511");
             data.setMessage("Name Birth Error.");
             return ResponseEntity.ok(data);
         }
 
-        // Attempt to register the user
         int result = registerService.register(registerReq);
-
-        // Handle registration failure
         if (result == 0) {
-            data.setCode("512"); // Custom error code for registration failure
+            data.setCode("512");
             data.setMessage("Register does not exist.");
             return ResponseEntity.ok(data);
         }
 
-        // Successful registration
         data.setMessage("Register Success");
         return ResponseEntity.ok(data);
     }

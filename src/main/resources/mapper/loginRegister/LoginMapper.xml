@@ -20,8 +20,7 @@
             Login_Token = #{tocken},
             Login_Token_Date = SYSDATE(),
             JWT_Token = #{JWTKey},
-            JWT_Token_Date = SYSDATE(),
-            General = #{General}
+            JWT_Token_Date = SYSDATE()
         WHERE User_IDX = #{IDX} AND Del = 0
     </update>
 

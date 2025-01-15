@@ -16,66 +16,85 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * AIChatUtil is a utility class that handles interactions with the OpenAI API.
+ * It constructs a request to the API, sends it, and then processes the response to map
+ * the AI's reply into a ChatMessageDTO object.
+ */
 @Component
 public class AIChatUtil {
 
+    /**
+     * The API key used to authenticate requests to the OpenAI API.
+     */
     @Value("${openai.api.key}")
     private String apiKey;
 
-    @Value("${openai.api.url}") // 예: https://api.openai.com/v1/chat/completions
+    /**
+     * The URL endpoint for the OpenAI API. For example:
+     * "https://api.openai.com/v1/chat/completions"
+     */
+    @Value("${openai.api.url}")
     private String apiUrl;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    /**
+     * Sends a chat completion request to the OpenAI API using system and user messages.
+     *
+     * @param systemMessage The initial context or instruction given to the AI.
+     * @param userMessage   The user's query or command.
+     * @return A ChatMessageDTO object containing the AI's response, or null if there's an error.
+     */
     public ChatMessageDTO sendChat(String systemMessage, String userMessage) {
+        // Create a CloseableHttpClient to manage HTTP requests.
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
 
+            // Prepare an HTTP POST request with the specified OpenAI endpoint.
             HttpPost request = new HttpPost(apiUrl);
             request.addHeader("Content-Type", "application/json");
             request.addHeader("Authorization", "Bearer " + apiKey);
 
-
-
-            // messages 리스트
+            // Construct a list of message maps: one for "system", one for "user".
             List<Map<String, String>> messages = List.of(
                     Map.of("role", "system", "content", systemMessage),
                     Map.of("role", "user", "content", userMessage)
             );
 
-            // 요청 Body 생성
+            // Prepare the request body as a map.
+            // "model" indicates which OpenAI model to use (e.g., "gpt-3.5-turbo", "gpt-4").
             Map<String, Object> body = new HashMap<>();
-            // 실제 사용 가능한 모델로 교체 필요 (예: "gpt-3.5-turbo" 또는 "gpt-4")
             body.put("model", "gpt-4o-mini");
             body.put("messages", messages);
             body.put("max_tokens", 16384);
             body.put("temperature", 0.7);
 
-            // JSON 직렬화 후 요청에 설정
+            // Convert the request body to JSON and attach it to the request.
             String jsonBody = objectMapper.writeValueAsString(body);
             request.setEntity(new StringEntity(jsonBody, ContentType.APPLICATION_JSON));
 
-            // 요청 실행
+            // Execute the request and process the response.
             try (CloseableHttpResponse response = httpClient.execute(request)) {
                 String responseBody = new String(response.getEntity().getContent().readAllBytes());
                 System.out.println("OpenAI Response: " + responseBody);
 
-                // 응답 JSON -> Map 변환
+                // Convert the JSON string into a Map for easier parsing.
                 Map<String, Object> responseMap = objectMapper.readValue(responseBody, Map.class);
 
-                // 에러 처리
+                // Check if the API returned an error object.
                 if (responseMap.containsKey("error")) {
                     Map<String, Object> error = (Map<String, Object>) responseMap.get("error");
                     String errorMessage = (String) error.get("message");
                     throw new IllegalStateException("OpenAI API Error: " + errorMessage);
                 }
 
-                // choices 필드가 있는지 확인
+                // Retrieve the "choices" array from the response.
                 List<Map<String, Object>> choices = (List<Map<String, Object>>) responseMap.get("choices");
                 if (choices == null || choices.isEmpty()) {
                     throw new IllegalStateException("No choices found in OpenAI response: " + responseBody);
                 }
 
-                // 첫 번째 choice의 message.content 가져오기
+                // Extract the first choice's "message" content.
                 Map<String, Object> choice = choices.get(0);
                 Map<String, Object> message = (Map<String, Object>) choice.get("message");
                 String content = (String) message.get("content");
@@ -83,18 +102,13 @@ public class AIChatUtil {
                     throw new IllegalStateException("No content found in the first choice: " + responseBody);
                 }
 
-                // AI 응답 content를 ChatDTO 구조로 역직렬화 시도
+                // Attempt to parse the AI's content into a ChatMessageDTO object.
                 try {
-                    // content가 예: {"Answer":"...","Summary":"...","List":[...]} 구조라고 가정
                     ChatMessageDTO chatMessageDTO = objectMapper.readValue(content, ChatMessageDTO.class);
                     return chatMessageDTO;
                 } catch (IOException e) {
                     e.printStackTrace();
-                    // JSON 파싱 실패 시, content 전체를 answer 등으로 담고 싶다면 아래처럼 처리 가능
-                    // ChatDTO fallbackDto = new ChatDTO();
-                    // fallbackDto.setAnswer(content);
-                    // return fallbackDto;
-
+                    // If parsing fails, one could return a fallback or a partial DTO.
                     return null;
                 }
             }

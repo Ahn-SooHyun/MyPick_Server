@@ -8,14 +8,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
- * The IDFoundController class handles API requests for finding user IDs.
- * It provides an endpoint to search for user IDs based on provided user information.
+ * The IDFoundController class handles API requests related to finding user IDs.
+ * It provides an endpoint to retrieve a user's ID based on the provided details.
  */
 @RestController
 @RequestMapping("/api/Found")
@@ -27,33 +24,36 @@ public class IDFoundController {
     Logger logger = LoggerFactory.getLogger(IDFoundController.class);
 
     /**
-     * Handles requests to find a user ID based on the provided information.
+     * Endpoint to find a user ID based on user information provided in the request body.
      *
-     * @param idFoundReq The request containing user details (e.g., name, email) for ID retrieval.
-     * @return A ResponseEntity containing a ResponsData object with the result of the operation.
-     *         If the ID is not found, an error code and message are returned.
+     * @param idFoundReq Contains user details (e.g., name, email) necessary to locate the user ID.
+     * @return A ResponseEntity containing a ResponsData object:
+     *         - A successful response includes the retrieved ID.
+     *         - If no matching ID is found, an error code and message are returned.
      */
     @PostMapping("/idFound")
     public ResponseEntity<?> idFound(@RequestBody @Valid IDFoundReq idFoundReq) {
         logger.info("===================================================");
         logger.info("idFound");
         logger.info("idFoundReq : {}", idFoundReq);
+
+        // Create a standardized response object
         ResponsData data = new ResponsData();
 
-        // Call the service to find the user ID
+        // Attempt to retrieve the user ID from the service layer
         String result = idFoundServer.idFound(idFoundReq);
 
-        // If no ID is found, return an error response
+        // If no ID could be found, set an appropriate error code and message
         if (result == null) {
-            data.setCode("520"); // Error code for ID not found
+            data.setCode("520"); // Custom error code indicating ID not found
             data.setMessage("ID not found");
             return ResponseEntity.ok(data);
         }
 
-        // If ID is found, set the result in the response
+        // If an ID was found, attach it to the response data
         data.setData(result);
 
+        // Return a successful response containing the user ID
         return ResponseEntity.ok(data);
     }
-
 }

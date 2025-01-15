@@ -7,14 +7,16 @@ import lombok.Data;
 
 /**
  * LoginReq represents the login request data containing the user's ID and password.
- * This class is used to transfer login credentials from the client to the server.
+ * This class is used to transfer login credentials from the client to the server,
+ * ensuring that the input adheres to specified security and formatting rules.
  */
 @Data
 public class LoginReq {
 
     /**
      * The ID of the user attempting to log in.
-     * Must be a non-blank string between 8 and 30 characters.
+     * Validation ensures the ID is neither null nor blank, and adheres to a specified length requirement,
+     * promoting better security practices and preventing common input-related vulnerabilities.
      */
     @NotBlank(message = "ID cannot be empty.")
     @Size(min = 8, max = 30, message = "ID must be between 8 and 30 characters.")
@@ -22,8 +24,11 @@ public class LoginReq {
 
     /**
      * The password of the user attempting to log in.
-     * Must be a non-blank string between 8 and 30 characters.
-     * The password must contain at least one letter (lowercase or uppercase), one number, and one special character.
+     * It includes multiple layers of validation:
+     * - Non-blank: Ensures no empty values.
+     * - Size: Restricts password length to between 8 and 30 characters to balance security and usability.
+     * - Pattern: Ensures the password includes a mix of letters, numbers, and special characters to
+     *   enhance password strength against brute-force attacks.
      */
     @NotBlank(message = "Password cannot be empty.")
     @Size(min = 8, max = 30, message = "Password must be between 8 and 30 characters.")

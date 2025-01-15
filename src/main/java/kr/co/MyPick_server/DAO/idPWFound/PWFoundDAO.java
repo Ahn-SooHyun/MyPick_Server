@@ -7,44 +7,62 @@ import kr.co.MyPick_server.DTO.idPWFound.PWFoundReq;
 import kr.co.MyPick_server.DTO.idPWFound.PWFoundCheckReq;
 import org.apache.ibatis.annotations.Mapper;
 
+/**
+ * PWFoundDAO is a Data Access Object (DAO) interface for managing operations related to password recovery.
+ * It provides methods for verifying user information, storing and validating recovery codes,
+ * and updating user passwords securely.
+ */
 @Mapper
 public interface PWFoundDAO {
 
     /**
-     * Checks if the provided user information matches an existing account
-     * for password recovery.
+     * Verifies if the provided user information matches an existing account for password recovery purposes.
      *
-     * @param pwFoundReq An object containing the user's ID, email, or other identifying data.
+     * @param pwFoundReq A DTO containing the user's identifying data, such as:
+     *                   - ID
+     *                   - Name
+     *                   - Birthdate
      * @return Returns 1 if the user exists and matches the given data, otherwise returns 0.
      */
     Integer PWFound(PWFoundReq pwFoundReq);
 
     /**
-     * Saves the generated verification code for password recovery in the database.
+     * Stores the generated verification code for password recovery in the database.
+     * This method ensures that the verification code is saved and can be later validated during recovery.
      *
-     * @param mailSendReq An object containing the email address and the verification code.
+     * @param mailSendReq A DTO containing:
+     *                    - The user's email address
+     *                    - The generated verification code
      */
     void CodeSave(MailSendReq mailSendReq);
 
     /**
-     * Validates the verification code provided by the user for password recovery.
+     * Validates the verification code provided by the user during the password recovery process.
      *
-     * @param pwFoundCheckReq An object containing the verification code and associated data.
+     * @param pwFoundCheckReq A DTO containing:
+     *                        - The verification code
+     *                        - Associated user information (e.g., ID or email)
      * @return Returns 1 if the code matches the stored data, otherwise returns 0.
      */
     Integer PWFoundCheck(PWFoundCheckReq pwFoundCheckReq);
 
     /**
-     * Updates the verification code data in the database for a specific user or request.
+     * Updates the verification code data in the database for a specific user or password recovery request.
      *
-     * @param codeUpdateReq An object containing the updated verification code and related data.
+     * @param codeUpdateReq A DTO containing:
+     *                      - The user's ID
+     *                      - The updated verification code
      */
     void PWFoundCheckUpdate(CodeUpdateReq codeUpdateReq);
 
     /**
-     * Updates the user's password in the database.
+     * Updates the user's password in the database after successful verification.
+     * This method is called once the user has been authenticated via the recovery process.
      *
-     * @param pwChangeReq An object containing the user's ID, new password, and verification data.
+     * @param pwChangeReq A DTO containing:
+     *                    - The user's ID
+     *                    - The new password
+     *                    - Verification details
      * @return Returns 1 if the password was successfully updated, otherwise returns 0.
      */
     int PWChange(PWChangeReq pwChangeReq);
