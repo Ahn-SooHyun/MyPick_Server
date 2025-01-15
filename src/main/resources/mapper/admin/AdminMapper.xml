@@ -8,4 +8,34 @@
         WHERE DEL = 0 AND User_IDX = #{IDX};
     </select>
 
+    <select id="UserListGet" resultType="UserListDTO">
+        SELECT Name, NickName, ID, General, Account_Suspension
+        FROM User
+        WHERE DEL = 0;
+    </select>
+
+    <select id="UserIDXGet" resultType="int" parameterType="UserIDXGet">
+        SELECT User_IDX
+        FROM User
+        WHERE Del = 0 AND ID = #{id} AND Name = #{name};
+    </select>
+
+    <update id="UserGeneralSet" parameterType="int">
+        UPDATE User
+        SET Login_Token = null, Login_Token_Date = null, JWT_Token = null, JWT_Token_Date = null, General = 1
+        WHERE Del = 0 AND User_IDX = #{userIDX};
+    </update>
+
+    <update id="UserAccountSuspension" parameterType="UseraccountSuspensionSetReq">
+        UPDATE User
+        SET Account_Suspension = #{accountSuspension}
+        WHERE Del = 0 AND User_IDX = #{IDX};
+    </update>
+
+    <update id="UserDelSet" parameterType="int">
+        UPDATE User
+        SET Login_Token = null, Login_Token_Date = null, JWT_Token = null, JWT_Token_Date = null, Del = 1
+        WHERE Del = 0 AND User_IDX = #{userIDX};
+    </update>
+
 </mapper>

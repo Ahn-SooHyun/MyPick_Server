@@ -35,6 +35,7 @@ public class RegisterReq {
      */
     @NotBlank(message = "Name cannot be empty.")
     @Pattern(regexp = "^[가-힣a-zA-Z ]+$", message = "Name must contain only letters and spaces.")
+    @Size(max = 50, message = "Name must not exceed 50 characters.")
     private String name;
 
     /**

@@ -46,14 +46,14 @@ public class LoginService implements LoginServiceImpl{
             loginUpdateRes.setGeneral("0");
         }
 
-        loginDTO.setTocken(UUID.randomUUID());
+        loginDTO.setToken(UUID.randomUUID());
 
         Map<String, Object> jwtData = jwtService.createJwt(IDX);
 
         loginDTO.setCT_AT((String) jwtData.get("JWT"));
 
         loginUpdateRes.setIDX(IDX);
-        loginUpdateRes.setTocken(String.valueOf(loginDTO.getTocken()));
+        loginUpdateRes.setToken(String.valueOf(loginDTO.getToken()));
         loginUpdateRes.setJWTKey((String) jwtData.get("signature"));
 
         logger.info(loginUpdateRes.toString());

@@ -49,28 +49,32 @@ public class LoginController {
         ResponsData data = new ResponsData();
 
         // Validate the auto-login token and determine user state
-        int IDX = loginService.autoLoginCheck(autoLoginReq.getTocken());
+        int IDX = loginService.autoLoginCheck(autoLoginReq.getToken());
         if (IDX == -2) {
             // User account is suspended
             data.setCode("509");
             data.setMessage("Your account has been suspended.");
+            logger.info(data.toString());
             return ResponseEntity.ok(data);
         }
         if (IDX == -1) {
             // Token does not exist or is invalid
             data.setCode("501");
             data.setMessage("Auto-login does not exist.");
+            logger.info(data.toString());
             return ResponseEntity.ok(data);
         }
         if (IDX == 0) {
             // Token has expired
             data.setCode("502");
             data.setMessage("Your time has expired.");
+            logger.info(data.toString());
             return ResponseEntity.ok(data);
         }
 
         // If IDX > 0, the token is valid; retrieve user data
         data.setData(loginService.login(IDX));
+        logger.info(data.toString());
         return ResponseEntity.ok(data);
     }
 
@@ -104,23 +108,27 @@ public class LoginController {
             // User account is suspended
             data.setCode("509");
             data.setMessage("Your account has been suspended.");
+            logger.info(data.toString());
             return ResponseEntity.ok(data);
         }
         if (IDX == -1) {
             // Invalid credentials or user not found
             data.setCode("500");
             data.setMessage("Login does not exist.");
+            logger.info(data.toString());
             return ResponseEntity.ok(data);
         }
         if (IDX == 0) {
             // Session expired
             data.setCode("502");
             data.setMessage("Your time has expired.");
+            logger.info(data.toString());
             return ResponseEntity.ok(data);
         }
 
         // If IDX > 0, credentials are valid; retrieve user data
         data.setData(loginService.login(IDX));
+        logger.info(data.toString());
         return ResponseEntity.ok(data);
     }
 }

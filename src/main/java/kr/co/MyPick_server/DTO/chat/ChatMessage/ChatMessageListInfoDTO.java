@@ -10,6 +10,7 @@ import lombok.Data;
  */
 @Data
 public class ChatMessageListInfoDTO {
+
     /**
      * The title of the item, which could be a video game or any other form of creative content. It may include
      * additional identifiers such as the release year, which aids users in precisely identifying and discussing

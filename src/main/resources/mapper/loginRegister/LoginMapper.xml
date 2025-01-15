@@ -5,7 +5,7 @@
     <select id="autoLoginCheck" resultType="java.util.Map" parameterType="String">
         SELECT User_IDX, Login_Token_Date, Account_Suspension
         FROM User
-        WHERE Login_Token = #{tocken} AND Del = 0;
+        WHERE Login_Token = #{token} AND Del = 0;
     </select>
 
     <select id="loginCheck" resultType="java.util.Map" parameterType="loginReq">
@@ -17,7 +17,7 @@
     <update id="loginUpdate" parameterType="LoginUpdateRes">
         UPDATE User
         SET
-            Login_Token = #{tocken},
+            Login_Token = #{token},
             Login_Token_Date = SYSDATE(),
             JWT_Token = #{JWTKey},
             JWT_Token_Date = SYSDATE()

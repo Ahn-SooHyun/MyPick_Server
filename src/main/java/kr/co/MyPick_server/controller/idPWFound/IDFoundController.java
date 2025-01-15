@@ -47,6 +47,7 @@ public class IDFoundController {
         if (result == null) {
             data.setCode("520"); // Custom error code indicating ID not found
             data.setMessage("ID not found");
+            logger.info(data.toString());
             return ResponseEntity.ok(data);
         }
 
@@ -54,6 +55,7 @@ public class IDFoundController {
         data.setData(result);
 
         // Return a successful response containing the user ID
+        logger.info(data.toString());
         return ResponseEntity.ok(data);
     }
 }

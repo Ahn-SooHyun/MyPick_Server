@@ -83,12 +83,14 @@ public class MessageController {
         if (result == null) {
             data.setCode("531");
             data.setMessage("chatIDX does not match.");
+            logger.info(data.toString());
             return ResponseEntity.ok(data);
         }
 
         // Otherwise, set the result as data and return a successful response
         data.setData(result);
 
+        logger.info(data.toString());
         return ResponseEntity.ok(data);
     }
 
@@ -116,18 +118,21 @@ public class MessageController {
             // -2 means the account is suspended
             data.setCode("509");
             data.setMessage("Your account has been suspended.");
+            logger.info(data.toString());
             return ResponseEntity.ok(data);
         }
         if (IDX == -1) {
             // -1 means the token does not exist
             data.setCode("503");
             data.setMessage("CT_AT does not exist.");
+            logger.info(data.toString());
             return ResponseEntity.ok(data);
         }
         if (IDX == 0) {
             // 0 means the token has expired
             data.setCode("504");
             data.setMessage("Your time has expired.");
+            logger.info(data.toString());
             return ResponseEntity.ok(data);
         }
 
@@ -157,6 +162,7 @@ public class MessageController {
             if (chatReq.getChatIDX() == 0) {
                 data.setCode("532");
                 data.setMessage("Create Chat Room Failed.");
+                logger.info(data.toString());
                 return ResponseEntity.ok(data);
             }
         }
@@ -170,6 +176,7 @@ public class MessageController {
         }
 
         // Return the response data with the sent message
+        logger.info(data.toString());
         return ResponseEntity.ok(data);
     }
 

@@ -95,6 +95,7 @@ public class RegisterController {
         if (IDCheck != 0) {
             data.setCode("510");
             data.setMessage("ID Error.");
+            logger.info(data.toString());
             return ResponseEntity.ok(data);
         }
 
@@ -102,6 +103,7 @@ public class RegisterController {
         if (nameBirthCheck != 0) {
             data.setCode("511");
             data.setMessage("Name Birth Error.");
+            logger.info(data.toString());
             return ResponseEntity.ok(data);
         }
 
@@ -109,10 +111,12 @@ public class RegisterController {
         if (result == 0) {
             data.setCode("512");
             data.setMessage("Register does not exist.");
+            logger.info(data.toString());
             return ResponseEntity.ok(data);
         }
 
         data.setMessage("Register Success");
+        logger.info(data.toString());
         return ResponseEntity.ok(data);
     }
 }

@@ -52,18 +52,21 @@ public class RoomController {
             // -2 indicates the user account is suspended
             data.setCode("509");
             data.setMessage("Your account has been suspended.");
+            logger.info(data.toString());
             return ResponseEntity.ok(data);
         }
         if (IDX == -1) {
             // -1 indicates the token is missing or invalid
             data.setCode("503");
             data.setMessage("CT_AT does not exist.");
+            logger.info(data.toString());
             return ResponseEntity.ok(data);
         }
         if (IDX == 0) {
             // 0 indicates the token has expired
             data.setCode("504");
             data.setMessage("Your time has expired.");
+            logger.info(data.toString());
             return ResponseEntity.ok(data);
         }
 
@@ -72,6 +75,7 @@ public class RoomController {
         data.setData(chatList);
 
         // Return the list of chat rooms
+        logger.info(data.toString());
         return ResponseEntity.ok(data);
     }
 
@@ -98,18 +102,21 @@ public class RoomController {
             // -2 indicates the user account is suspended
             data.setCode("509");
             data.setMessage("Your account has been suspended.");
+            logger.info(data.toString());
             return ResponseEntity.ok(data);
         }
         if (IDX == -1) {
             // -1 indicates the token is missing or invalid
             data.setCode("503");
             data.setMessage("CT_AT does not exist.");
+            logger.info(data.toString());
             return ResponseEntity.ok(data);
         }
         if (IDX == 0) {
             // 0 indicates the token has expired
             data.setCode("504");
             data.setMessage("Your time has expired.");
+            logger.info(data.toString());
             return ResponseEntity.ok(data);
         }
 
@@ -119,11 +126,13 @@ public class RoomController {
             // If room deletion fails, return an error code
             data.setCode("533");
             data.setMessage("Room Delete failed.");
+            logger.info(data.toString());
             return ResponseEntity.ok(data);
         }
 
         // If successful, return a success message indicating which room was deleted
         data.setMessage("Room Number " + chatMessageListReq.getChatIDX() + " is deleted");
+        logger.info(data.toString());
         return ResponseEntity.ok(data);
     }
 }

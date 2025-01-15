@@ -52,10 +52,12 @@ public class PWFoundController {
         if (result == 0) {
             data.setCode("521");  // Custom error code indicating "User not found"
             data.setMessage("User not found");
+            logger.info(data.toString());
             return ResponseEntity.ok(data);
         }
 
         // If the user is found, proceed without setting an error code (business logic might send an email, etc.)
+        logger.info(data.toString());
         return ResponseEntity.ok(data);
     }
 
@@ -83,10 +85,13 @@ public class PWFoundController {
         if (result == null) {
             data.setCode("522");  // Error code indicating "User not found" or invalid code
             data.setMessage("User not found");
+            logger.info(data.toString());
+            return ResponseEntity.ok(data);
         }
 
         // Set the verification result (could be a token, success message, or some other data)
         data.setData(result);
+        logger.info(data.toString());
         return ResponseEntity.ok(data);
     }
 
@@ -114,9 +119,12 @@ public class PWFoundController {
         if (result == 0) {
             data.setCode("523");  // Custom error code indicating "Password not changed"
             data.setMessage("Password not changed");
+            logger.info(data.toString());
+            return ResponseEntity.ok(data);
         }
 
         // Return a successful response if no error code is set
+        logger.info(data.toString());
         return ResponseEntity.ok(data);
     }
 }
