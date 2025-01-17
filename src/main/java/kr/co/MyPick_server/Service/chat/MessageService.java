@@ -234,4 +234,14 @@ public class MessageService implements MessageServiceImpl {
 
     }
 
+    @Override
+    public int ChatRoomCheck(ChatMessageListGetReq chatMessageListGetReq) {
+        Integer result = chatDAO.ChatRoomCheck(chatMessageListGetReq);
+        if (result == null) {
+            return 0;
+        }
+
+        return result;
+    }
+
 }

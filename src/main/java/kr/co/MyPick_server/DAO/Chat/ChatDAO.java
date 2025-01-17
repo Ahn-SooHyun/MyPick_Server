@@ -73,4 +73,7 @@ public interface ChatDAO {
      * @return Returns 1 if the deletion is successful, otherwise returns 0.
      */
     int ChatRoomDelete(ChatMessageListGetReq chatMessageListGetReq);
+
+    Integer ChatRoomCheck(ChatMessageListGetReq chatMessageListGetReq);
+
 }

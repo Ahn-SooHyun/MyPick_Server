@@ -50,4 +50,6 @@ public interface RegisterDAO {
      * @return Returns 1 if the registration is successful, otherwise returns 0.
      */
     int register(RegisterReq registerReq);
+
+    int IDXGet(RegisterReq registerReq);
 }

@@ -30,4 +30,10 @@
         WHERE Del = 0 AND User_IDX = #{IDX};
     </select>
 
+    <update id="logoutUpdate" parameterType="int" >
+        UPDATE User
+        SET Login_Token = null, Login_Token_Date = null, JWT_Token = null, JWT_Token_Date = null
+        WHERE Del = 0 AND User_IDX = #{IDX};
+    </update>
+
 </mapper>

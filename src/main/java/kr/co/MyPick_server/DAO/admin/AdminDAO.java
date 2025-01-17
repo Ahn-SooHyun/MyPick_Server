@@ -2,6 +2,7 @@ package kr.co.MyPick_server.DAO.admin;
 
 import kr.co.MyPick_server.DTO.admin.UserIDXGet;
 import kr.co.MyPick_server.DTO.admin.UserListDTO;
+import kr.co.MyPick_server.DTO.admin.UserListRes;
 import kr.co.MyPick_server.DTO.admin.UseraccountSuspensionSetReq;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -33,7 +34,7 @@ public interface AdminDAO {
      *         - Privilege level (e.g., admin or regular user)
      *         - Account suspension status
      */
-    List<UserListDTO> UserListGet();
+    List<UserListRes> UserListGet();
 
     /**
      * Retrieves the unique identifier (IDX) of a user based on their ID and name.

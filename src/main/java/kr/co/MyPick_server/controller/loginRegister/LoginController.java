@@ -1,9 +1,13 @@
 package kr.co.MyPick_server.controller.loginRegister;
 
 import jakarta.validation.Valid;
+import kr.co.MyPick_server.DAO.loginRegister.LoginDAO;
 import kr.co.MyPick_server.DTO.loginReigster.AutoLoginReq;
+import kr.co.MyPick_server.DTO.loginReigster.LoginDTO;
 import kr.co.MyPick_server.DTO.loginReigster.LoginReq;
+import kr.co.MyPick_server.Service.JWT.JWTService;
 import kr.co.MyPick_server.Service.loginRegister.LoginService;
+import kr.co.MyPick_server.Util.JWTUtil;
 import kr.co.MyPick_server.Util.ResponsData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +27,10 @@ public class LoginController {
     private LoginService loginService;
 
     Logger logger = LoggerFactory.getLogger(LoginController.class);
+    @Autowired
+    private LoginDAO loginDAO;
+    @Autowired
+    private JWTService jwtService;
 
     /**
      * Endpoint to verify an auto-login token and retrieve user information.
@@ -72,8 +80,10 @@ public class LoginController {
             return ResponseEntity.ok(data);
         }
 
+        LoginDTO loginDTO = loginService.login(IDX);
         // If IDX > 0, the token is valid; retrieve user data
-        data.setData(loginService.login(IDX));
+        data.setData(loginDTO);
+        data.setIdentification(loginDTO.getCT_AT());
         logger.info(data.toString());
         return ResponseEntity.ok(data);
     }
@@ -127,7 +137,56 @@ public class LoginController {
         }
 
         // If IDX > 0, credentials are valid; retrieve user data
-        data.setData(loginService.login(IDX));
+        LoginDTO loginDTO = loginService.login(IDX);
+        data.setData(loginDTO);
+        data.setIdentification(loginDTO.getCT_AT());
+        logger.info(data.toString());
+        return ResponseEntity.ok(data);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestBody String CT_AT) {
+        logger.info("===================================================");
+        logger.info("logout");
+        logger.info("CT_AT: {}", CT_AT);
+
+        ResponsData data = new ResponsData();
+        data.setIdentification(CT_AT);
+
+        // Extract user IDX (identifier) from the provided JWT token
+        int IDX = jwtService.extractKey(CT_AT);
+
+        // Check various token validation cases
+        if (IDX == -2) {
+            // -2 means the account is suspended
+            data.setCode("509");
+            data.setMessage("Your account has been suspended.");
+            logger.info(data.toString());
+            return ResponseEntity.ok(data);
+        }
+        if (IDX == -1) {
+            // -1 means the token does not exist
+            data.setCode("503");
+            data.setMessage("CT_AT does not exist.");
+            logger.info(data.toString());
+            return ResponseEntity.ok(data);
+        }
+        if (IDX == 0) {
+            // 0 means the token has expired
+            data.setCode("504");
+            data.setMessage("Your time has expired.");
+            logger.info(data.toString());
+            return ResponseEntity.ok(data);
+        }
+
+        int result = loginService.logoutUpdate(IDX);
+        if (result == 0) {
+            data.setCode("505");
+            data.setMessage("Logout failed.");
+            logger.info(data.toString());
+            return ResponseEntity.ok(data);
+        }
+
         logger.info(data.toString());
         return ResponseEntity.ok(data);
     }

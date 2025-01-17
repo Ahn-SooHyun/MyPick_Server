@@ -40,7 +40,8 @@ public class RegisterService implements RegisterServiceImpl{
         logger.info(registerReq.toString());
         registerReq.setId(base64Util.encode(registerReq.getId()));
         registerReq.setPw(bCryptUtil.setPassword(base64Util.encode(registerReq.getPw())));
+        registerDAO.register(registerReq);
 
-        return registerDAO.register(registerReq);
+        return registerDAO.IDXGet(registerReq);
     }
 }

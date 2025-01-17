@@ -42,6 +42,7 @@ public class RoomController {
 
         // Create a uniform response object to send consistent responses
         ResponsData data = new ResponsData();
+        data.setIdentification(CT_AT);
 
         // Extract the user identifier (IDX) from the provided JWT token
         int IDX = jwtService.extractKey(CT_AT);
@@ -93,6 +94,7 @@ public class RoomController {
 
         // Create a uniform response object to send consistent responses
         ResponsData data = new ResponsData();
+        data.setIdentification(chatMessageListReq.getCT_AT());
 
         // Extract the user identifier (IDX) from the provided JWT token
         int IDX = jwtService.extractKey(chatMessageListReq.getCT_AT());

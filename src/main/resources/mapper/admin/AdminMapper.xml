@@ -8,8 +8,8 @@
         WHERE DEL = 0 AND User_IDX = #{IDX};
     </select>
 
-    <select id="UserListGet" resultType="UserListDTO">
-        SELECT Name, NickName, ID, General, Account_Suspension
+    <select id="UserListGet" resultType="UserListRes">
+        SELECT Name, NickName, ID, General, Account_Suspension, JWT_Token_Date
         FROM User
         WHERE DEL = 0;
     </select>
@@ -22,7 +22,11 @@
 
     <update id="UserGeneralSet" parameterType="int">
         UPDATE User
-        SET Login_Token = null, Login_Token_Date = null, JWT_Token = null, JWT_Token_Date = null, General = 1
+        SET Login_Token = null,
+            Login_Token_Date = null,
+            JWT_Token = null,
+            JWT_Token_Date = null,
+            General = CASE WHEN General = 1 THEN 0 ELSE 1 END
         WHERE Del = 0 AND User_IDX = #{userIDX};
     </update>
 

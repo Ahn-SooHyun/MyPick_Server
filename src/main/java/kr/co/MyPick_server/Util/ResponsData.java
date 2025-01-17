@@ -13,6 +13,7 @@ import lombok.Data;
 @Data
 public class ResponsData {
 
+    private String identification;
     private String code; // Response status code ("200" for success, "500" for failure).
     private String message; // Descriptive message about the response (e.g., error details).
 

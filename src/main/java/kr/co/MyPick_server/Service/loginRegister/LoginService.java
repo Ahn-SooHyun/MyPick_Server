@@ -128,4 +128,9 @@ public class LoginService implements LoginServiceImpl{
         return 0;
     }
 
+    @Override
+    public int logoutUpdate(int IDX) {
+        return loginDAO.logoutUpdate(IDX);
+    }
+
 }

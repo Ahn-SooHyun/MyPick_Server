@@ -30,4 +30,6 @@ public interface LoginServiceImpl {
      */
     int loginCheck(LoginReq loginReq);
 
+    int logoutUpdate(int IDX);
+
 }

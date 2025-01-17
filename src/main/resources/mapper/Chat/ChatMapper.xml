@@ -43,4 +43,10 @@
         WHERE Del = 0 AND User_IDX = #{userIDX} AND Chat_IDX = #{chatIDX};
     </update>
 
+    <select id="ChatRoomCheck" resultType="int" parameterType="ChatMessageListGetReq">
+        SELECT Chat_IDX
+        FROM Chat_List
+        WHERE Del = 0 AND Chat_IDX = #{chatIDX} AND User_IDX = #{userIDX};
+    </select>
+
 </mapper>

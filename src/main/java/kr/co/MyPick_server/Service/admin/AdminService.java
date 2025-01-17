@@ -5,6 +5,7 @@ import kr.co.MyPick_server.DAO.admin.AdminMongoDAO;
 import kr.co.MyPick_server.DTO.MongoDB.AdminMessageMongoReq;
 import kr.co.MyPick_server.DTO.admin.UserIDXGet;
 import kr.co.MyPick_server.DTO.admin.UserListDTO;
+import kr.co.MyPick_server.DTO.admin.UserListRes;
 import kr.co.MyPick_server.DTO.admin.UseraccountSuspensionSetReq;
 import kr.co.MyPick_server.Util.Base64Util;
 import org.slf4j.Logger;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -38,25 +40,28 @@ public class AdminService implements AdminServiceImpl{
     @Override
     public List<UserListDTO> UserListGet() {
 
-        List<UserListDTO> userListDTO = adminDAO.UserListGet();
+        List<UserListRes> userListRes = adminDAO.UserListGet();
+        List<UserListDTO> userListDTO = new ArrayList<>();
 
-        for (int i = 0; i < userListDTO.size(); i++) {
-            userListDTO.get(i).setID(base64Util.decode(userListDTO.get(i).getID()));
+        for (int i = 0; i < userListRes.size(); i++) {
+            UserListDTO dto = new UserListDTO();
 
-            if (userListDTO.get(i).getGeneral().equals("1")) {
-                userListDTO.get(i).setGeneral("관리자");
-            }
-            else {
-                userListDTO.get(i).setGeneral("일반 사용자");
+            // 데이터 설정
+            userListRes.get(i).setID(base64Util.decode(userListRes.get(i).getID()));
+
+            if (userListRes.get(i).getGeneral().equals("1")) {
+                userListRes.get(i).setGeneral("관리자");
+            } else {
+                userListRes.get(i).setGeneral("일반 사용자");
             }
 
-            if (userListDTO.get(i).getAccountSuspension().toLocalDateTime().toLocalDate().isBefore(LocalDate.now())) {
-                userListDTO.get(i).setAccountSuspension(null); // 과거 날짜라면 null로 설정
-            }
-            else {
-                userListDTO.get(i).setAccountSuspension(
+            // 계정 정지 날짜 처리
+            if (userListRes.get(i).getAccountSuspension().toLocalDateTime().toLocalDate().isBefore(LocalDate.now())) {
+                userListRes.get(i).setAccountSuspension(null);
+            } else {
+                userListRes.get(i).setAccountSuspension(
                         Timestamp.valueOf(
-                                userListDTO.get(i).getAccountSuspension()
+                                userListRes.get(i).getAccountSuspension()
                                         .toLocalDateTime()
                                         .atZone(ZoneId.of("UTC"))
                                         .withZoneSameInstant(ZoneId.of("Asia/Seoul"))
@@ -64,9 +69,32 @@ public class AdminService implements AdminServiceImpl{
                         )
                 );
             }
+
+            // JWT 토큰 날짜 처리
+            userListRes.get(i).setJwtTokenDate(
+                    Timestamp.valueOf(
+                            userListRes.get(i).getJwtTokenDate()
+                                    .toLocalDateTime()
+                                    .atZone(ZoneId.of("UTC"))
+                                    .withZoneSameInstant(ZoneId.of("Asia/Seoul"))
+                                    .toLocalDateTime()
+                    )
+            );
+
+            // DTO 값 설정
+            dto.setName(userListRes.get(i).getName());
+            dto.setNickName(userListRes.get(i).getNickName());
+            dto.setID(userListRes.get(i).getID());
+            dto.setGeneral(userListRes.get(i).getGeneral());
+            dto.setAccountSuspension(userListRes.get(i).getAccountSuspension());
+            dto.setLastDate(userListRes.get(i).getJwtTokenDate());
+
+            // 리스트에 추가
+            userListDTO.add(dto);
         }
 
         return userListDTO;
+
     }
 
     @Override
@@ -110,6 +138,7 @@ public class AdminService implements AdminServiceImpl{
 
     @Override
     public int UserGeneralSet(int userIDX) {
+
         return adminDAO.UserGeneralSet(userIDX);
     }
 

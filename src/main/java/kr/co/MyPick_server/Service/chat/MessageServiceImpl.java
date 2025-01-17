@@ -49,4 +49,6 @@ public interface MessageServiceImpl {
      */
     ChatMessageDTO chatMessageSend(int IDX, int roomIDX, String prompt);
 
+    int ChatRoomCheck(ChatMessageListGetReq chatMessageListGetReq);
+
 }

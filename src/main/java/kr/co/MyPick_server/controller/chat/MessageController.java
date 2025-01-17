@@ -47,6 +47,7 @@ public class MessageController {
 
         // A custom response data object to unify response structure
         ResponsData data = new ResponsData();
+        data.setIdentification(chatMessageListReq.getCT_AT());
 
         // Extract user IDX (identifier) from the provided JWT token
         int IDX = jwtService.extractKey(chatMessageListReq.getCT_AT());
@@ -56,18 +57,21 @@ public class MessageController {
             // -2 means the account is suspended
             data.setCode("509");
             data.setMessage("Your account has been suspended.");
+            logger.info(data.toString());
             return ResponseEntity.ok(data);
         }
         if (IDX == -1) {
             // -1 means the token does not exist
             data.setCode("503");
             data.setMessage("CT_AT does not exist.");
+            logger.info(data.toString());
             return ResponseEntity.ok(data);
         }
         if (IDX == 0) {
             // 0 means the token has expired
             data.setCode("504");
             data.setMessage("Your time has expired.");
+            logger.info(data.toString());
             return ResponseEntity.ok(data);
         }
 
@@ -82,7 +86,7 @@ public class MessageController {
         // If no result is found, return an error code
         if (result == null) {
             data.setCode("531");
-            data.setMessage("chatIDX does not match.");
+            data.setMessage("There is no chat history.");
             logger.info(data.toString());
             return ResponseEntity.ok(data);
         }
@@ -109,6 +113,7 @@ public class MessageController {
 
         // A custom response data object to unify response structure
         ResponsData data = new ResponsData();
+        data.setIdentification(chatReq.getCT_AT());
 
         // Extract user IDX (identifier) from the provided JWT token
         int IDX = jwtService.extractKey(chatReq.getCT_AT());
@@ -165,6 +170,18 @@ public class MessageController {
                 logger.info(data.toString());
                 return ResponseEntity.ok(data);
             }
+        }
+
+        ChatMessageListGetReq chatMessageListGetReq = new ChatMessageListGetReq();
+        chatMessageListGetReq.setUserIDX(IDX);
+        chatMessageListGetReq.setChatIDX(chatReq.getChatIDX());
+        int roomCheck = chatService.ChatRoomCheck(chatMessageListGetReq);
+        logger.info(String.valueOf(roomCheck));
+        if (roomCheck == 0) {
+            data.setCode("539");
+            data.setMessage("Wrong Room Number");
+            logger.info(data.toString());
+            return ResponseEntity.ok(data);
         }
 
         // If we didn’t create a chat room using slash command, proceed to send the message

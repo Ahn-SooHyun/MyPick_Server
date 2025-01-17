@@ -10,7 +10,7 @@ import java.sql.Timestamp;
  * and their details in administrative tools or dashboards.
  */
 @Data
-public class UserListDTO {
+public class UserListRes {
 
     /**
      * The full name of the user.
@@ -46,5 +46,5 @@ public class UserListDTO {
      */
     private Timestamp accountSuspension;
 
-    private Timestamp LastDate;
+    private Timestamp jwtTokenDate;
 }

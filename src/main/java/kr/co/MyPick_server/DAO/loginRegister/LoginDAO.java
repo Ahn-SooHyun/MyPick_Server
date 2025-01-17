@@ -56,4 +56,6 @@ public interface LoginDAO {
      *         - "0" for regular users
      */
     String GeneralCheck(int IDX);
+
+    int logoutUpdate(int IDX);
 }

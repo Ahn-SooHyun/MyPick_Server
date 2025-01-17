@@ -1,7 +1,10 @@
 package kr.co.MyPick_server.controller.loginRegister;
 
 import jakarta.validation.Valid;
+import kr.co.MyPick_server.DTO.loginReigster.LoginDTO;
 import kr.co.MyPick_server.DTO.loginReigster.RegisterReq;
+import kr.co.MyPick_server.Service.JWT.JWTService;
+import kr.co.MyPick_server.Service.loginRegister.LoginService;
 import kr.co.MyPick_server.Service.loginRegister.RegisterService;
 import kr.co.MyPick_server.Util.ResponsData;
 import org.slf4j.Logger;
@@ -27,6 +30,10 @@ public class RegisterController {
 
     @Autowired
     RegisterService registerService;
+    @Autowired
+    private JWTService jwtService;
+    @Autowired
+    private LoginService loginService;
 
     Logger logger = LoggerFactory.getLogger(RegisterController.class);
 
@@ -114,6 +121,10 @@ public class RegisterController {
             logger.info(data.toString());
             return ResponseEntity.ok(data);
         }
+
+        LoginDTO identification = loginService.login(result);
+        data.setIdentification(identification.getCT_AT());
+        loginService.logoutUpdate(result);
 
         data.setMessage("Register Success");
         logger.info(data.toString());
