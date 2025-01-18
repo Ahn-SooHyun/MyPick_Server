@@ -1,0 +1,41 @@
+<configuration>
+    <!-- Spring Boot의 ANSI 색상 활성화 -->
+    <property name="CONSOLE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %highlight(%logger{36}) - %msg%n" />
+
+    <!-- Interceptor 전용 로그 파일 설정 -->
+    <appender name="INTERCEPTOR_FILE" class="ch.qos.logback.core.FileAppender">
+        <file>logs/interceptor.log</file> <!-- Interceptor 로그 파일 경로 -->
+        <append>true</append>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Application 전용 로그 파일 설정 -->
+    <appender name="APPLICATION_FILE" class="ch.qos.logback.core.FileAppender">
+        <file>logs/application.log</file> <!-- Application 로그 파일 경로 -->
+        <append>true</append>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 콘솔 출력 설정 (ANSI 색상 활성화) -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Interceptor 로거 설정 -->
+    <logger name="kr.co.MyPick_server.interceptor.Interceptor" level="info" additivity="false">
+        <appender-ref ref="INTERCEPTOR_FILE" />
+        <appender-ref ref="CONSOLE" /> <!-- Interceptor 로그도 콘솔에 출력 -->
+    </logger>
+
+    <!-- 기본 root 로거 설정 (Interceptor 제외 모든 로그) -->
+    <root level="info">
+        <appender-ref ref="APPLICATION_FILE" />
+        <appender-ref ref="CONSOLE" /> <!-- 모든 로그를 콘솔에 출력 -->
+    </root>
+</configuration>

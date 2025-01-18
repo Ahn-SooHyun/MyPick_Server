@@ -6,6 +6,7 @@ import kr.co.MyPick_server.DTO.admin.UseraccountSuspensionReq;
 import kr.co.MyPick_server.Service.JWT.JWTService;
 import kr.co.MyPick_server.Service.admin.AdminService;
 import kr.co.MyPick_server.Util.ResponsData;
+import kr.co.MyPick_server.interceptor.Interceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * AdminController class provides REST API endpoints for administrative operations.
@@ -31,6 +34,8 @@ public class AdminController {
     // Injects AdminService to manage and perform administrative operations like user management.
     @Autowired
     private AdminService adminService;
+    @Autowired
+    private Interceptor interceptor;
 
     // Logger to track activity and debugging information for the AdminController.
     private final Logger logger = LoggerFactory.getLogger(AdminController.class);
@@ -388,7 +393,7 @@ public class AdminController {
     public ResponseEntity<?> userDel(@Valid @RequestBody UserReq userReq) {
         logger.info("=================================================");
         logger.info("userDel endpoint called.");
-        logger.info("Request data: {}", userReq);
+        logger.info("UserReq: {}", userReq);
         ResponsData data = new ResponsData();
         data.setIdentification(userReq.getCT_AT());
 
@@ -443,6 +448,61 @@ public class AdminController {
         }
 
         data.setMessage("User Delete success.");
+        logger.info(data.toString());
+        return ResponseEntity.ok(data);
+    }
+
+    @PostMapping("log")
+    public ResponseEntity<?> log(@RequestBody String CT_AT) {
+        logger.info("=================================================");
+        logger.info("userDel endpoint called.");
+        logger.info("CT_AT: {}", CT_AT);
+        ResponsData data = new ResponsData();
+        data.setIdentification(CT_AT);
+
+        // Extracts the key (IDX) from the JWT token using the JWTService.
+        int IDX = jwtService.extractKey(CT_AT);
+
+        // Handles different cases based on the IDX returned.
+        if (IDX == -2) { // Account suspended
+            data.setCode("509");
+            data.setMessage("Your account has been suspended.");
+            logger.info(data.toString());
+            return ResponseEntity.ok(data);
+        }
+        if (IDX == -1) { // Token does not exist
+            data.setCode("503");
+            data.setMessage("CT_AT does not exist.");
+            logger.info(data.toString());
+            return ResponseEntity.ok(data);
+        }
+        if (IDX == 0) { // Token expired
+            data.setCode("504");
+            data.setMessage("Your time has expired.");
+            logger.info(data.toString());
+            return ResponseEntity.ok(data);
+        }
+
+        // Verifies if the user associated with the token is an administrator.
+        int adminCheck = adminService.adminCheck(IDX);
+        if (adminCheck == 0) { // Not an admin account
+            data.setCode("590");
+            data.setMessage("Your account is not an administrator.");
+            logger.info(data.toString());
+            return ResponseEntity.ok(data);
+        }
+
+        // Fetch logs from Interceptor and set to data
+        List<String> logs = interceptor.readLogsFromFile("logs/interceptor.log");
+        if (logs == null) {
+            data.setCode("599");
+            data.setMessage("No log records found.");
+            logger.info(data.toString());
+            return ResponseEntity.ok(data);
+        }
+
+        data.setData(logs);
+        data.setMessage("Logs retrieved successfully.");
         logger.info(data.toString());
         return ResponseEntity.ok(data);
     }

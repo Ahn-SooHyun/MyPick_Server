@@ -66,7 +66,7 @@ public class MessageService implements MessageServiceImpl {
             chats = chatMongoDAO.findByChatIdxAndUserIdx(
                     chatMessageListGetReq.getChatIDX(),
                     chatMessageListGetReq.getUserIDX(),
-                    Sort.by(Sort.Direction.DESC, "date") // 날짜 기준 내림차순 정렬
+                    Sort.by(Sort.Direction.ASC, "date") // 날짜 기준 내림차순 정렬
             );
 
             if (chats == null || chats.isEmpty()) {

@@ -2,6 +2,8 @@ package kr.co.MyPick_server.interceptor;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kr.co.MyPick_server.Service.JWT.JWTService;
@@ -12,12 +14,34 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class Interceptor implements HandlerInterceptor {
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private JWTService jwtService;
+
+    // Log index for tracking
+    private static final AtomicInteger logIndex = new AtomicInteger(1);
+
+    // 서버 시작 시 로깅
+    @PostConstruct
+    public void logOnStartup() {
+        logger.info("========================================");
+        logger.info("Interceptor has been initialized.");
+        logger.info("Server startup time: {}", LocalDateTime.now());
+        logger.info("========================================");
+    }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -39,37 +63,58 @@ public class Interceptor implements HandlerInterceptor {
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-        JsonNode jsonNode = null;
         if (response instanceof ContentCachingResponseWrapper) {
             ContentCachingResponseWrapper wrappedResponse = (ContentCachingResponseWrapper) response;
 
-            // 응답 본문 추출
+            // 기존 응답 본문 읽기
             String responseBody = new String(wrappedResponse.getContentAsByteArray(), wrappedResponse.getCharacterEncoding());
 
             ObjectMapper objectMapper = new ObjectMapper();
-            jsonNode = objectMapper.readTree(responseBody);
+            JsonNode jsonNode = objectMapper.readTree(responseBody);
+
+            // identification 값 추출
+            String identification = jsonNode.get("identification").asText();
+
+            // identification을 사용해 userIDX 추출
+            int userIDX = jwtService.extractKey(identification);
+
+            // identification 필드 제거
+            ((ObjectNode) jsonNode).remove("identification");
+
+            // 수정된 JSON을 문자열로 변환
+            String modifiedResponseBody = objectMapper.writeValueAsString(jsonNode);
+
+            // 응답 본문에 수정된 데이터를 다시 설정
+            wrappedResponse.resetBuffer();
+            wrappedResponse.getWriter().write(modifiedResponseBody);
+
+            // 로그 생성
+            int index = logIndex.getAndIncrement();
+            String ip = request.getRemoteAddr();
+            String code = jsonNode.get("code").asText();
+            String message = jsonNode.get("message").asText();
+            String type = "200".equals(code) ? "SUCCESS" : "ERROR";
+            String date = LocalDateTime.now().toString();
+
+            logger.info("Log Record - index: {}, ip: {}, Type: {}, IDX: {}, Code: {}, Message: {}, date: {}",
+                    index, ip, type, userIDX, code, message, date);
         } else {
-            logger.warn("Response is not instance of ContentCachingResponseWrapper");
+            return;
         }
-
-        int index = 1; // 순차적 증가를 위한 index
-        String ip = request.getRemoteAddr(); // 클라이언트의 IP 주소
-        String identification = jsonNode.get("identification").asText(); // 기본값
-        int userIDX = jwtService.extractKey(identification);
-        String code = jsonNode.get("code").asText(); // 기본값
-        String message = jsonNode.get("message").asText(); // 기본값
-        String type = "Unknown"; // 기본값
-        String date = java.time.LocalDateTime.now().toString(); // 현재 날짜와 시간
-
-
-        // 로그 타입 설정
-        type = "200".equals(code) ? "SUCCESS" : "ERROR";
-
-        // 로그 출력
-        logger.info("Log Record - index: {}, ip: {}, Type: {}, IDX: {}, Code: {}, Message: {}, date: {}",
-                index, ip, type, userIDX, code, message, date);
     }
 
-
+    public List<String> readLogsFromFile(String filePath) {
+        List<String> logs = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                logs.add(line);
+            }
+        } catch (IOException e) {
+            logger.error("Error reading log file: {}", filePath, e);
+            return null;
+        }
+        return logs;
+    }
 
 }

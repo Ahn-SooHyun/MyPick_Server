@@ -33,13 +33,13 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public Interceptor testInterceptor() {
+    public Interceptor Interceptor() {
         return new Interceptor();
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(testInterceptor())
+        registry.addInterceptor(Interceptor())
         // .addPathPatterns("/api/**") // 이 인터셉터가 적용될 경로 패턴을 지정할 수 있습니다.
         // .excludePathPatterns("/api/login", "/api/register") // 이 인터셉터에서 제외할 경로 패턴을 지정할 수 있습니다.
         ;
