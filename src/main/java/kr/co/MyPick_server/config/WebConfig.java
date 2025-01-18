@@ -28,9 +28,16 @@ public class WebConfig implements WebMvcConfigurer {
      */
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")  // Allows CORS for all URL paths
-                .allowedOriginPatterns("*"); // Allows requests from any origin
+        registry.addMapping("/**")
+                .allowedOrigins("*")  // 모든 도메인 허용
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedHeaders("*")
+                .allowCredentials(false);  // 자격 증명 허용 안 함
     }
+
+
+
+
 
     @Bean
     public Interceptor Interceptor() {

@@ -46,13 +46,14 @@ public class Interceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
-//        logger.info("============= construction_api =============");
-//        logger.info("Request URI ==> : {}", request.toString());
-//
-//        logger.info("response URI ==> : {}", response.toString());
-//
-//        logger.info("handler URI ==> : {}", handler.toString());
-//        logger.info("============================================");
+        logger.info("============= construction_api =============");
+        logger.info("Request URI ==> : {}", request.toString());
+        logger.info(request.getRequestURI());
+
+        logger.info("response URI ==> : {}", response.toString());
+
+        logger.info("handler URI ==> : {}", handler.toString());
+        logger.info("============================================");
 
         // 여기서 response.sendRedirect("/") 주석 처리를 해제하면 요청을 다른 URL로 리다이렉트할 수 있습니다.
         // response.sendRedirect("/");
