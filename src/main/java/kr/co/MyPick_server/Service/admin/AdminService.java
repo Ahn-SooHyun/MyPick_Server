@@ -3,10 +3,7 @@ package kr.co.MyPick_server.Service.admin;
 import kr.co.MyPick_server.DAO.admin.AdminDAO;
 import kr.co.MyPick_server.DAO.admin.AdminMongoDAO;
 import kr.co.MyPick_server.DTO.MongoDB.AdminMessageMongoReq;
-import kr.co.MyPick_server.DTO.admin.UserIDXGet;
-import kr.co.MyPick_server.DTO.admin.UserListDTO;
-import kr.co.MyPick_server.DTO.admin.UserListRes;
-import kr.co.MyPick_server.DTO.admin.UseraccountSuspensionSetReq;
+import kr.co.MyPick_server.DTO.admin.*;
 import kr.co.MyPick_server.Util.Base64Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -113,13 +110,19 @@ public class AdminService implements AdminServiceImpl{
     }
 
     @Override
-    public List<AdminMessageMongoReq> UserMessageGet(int userIDX) {
+    public List<UserRoomList> UserRoomGet(int userIDX) {
+        return adminDAO.userRoomList(userIDX);
+    }
+
+    @Override
+    public List<AdminMessageMongoReq> UserMessageGet(int userIDX, int roomNum) {
 
         List<AdminMessageMongoReq> chats;
         try {
             chats = adminMongoDAO.findByUserIdx(
                     userIDX,
-                    Sort.by(Sort.Direction.DESC, "date") // 날짜 기준 내림차순 정렬
+                    roomNum,
+                    Sort.by(Sort.Direction.ASC, "date") // 날짜 기준 내림차순 정렬
             );
 
             if (chats == null || chats.isEmpty()) {

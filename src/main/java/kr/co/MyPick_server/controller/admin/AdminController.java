@@ -1,7 +1,9 @@
 package kr.co.MyPick_server.controller.admin;
 
 import jakarta.validation.Valid;
+import kr.co.MyPick_server.DTO.admin.UserMessageReq;
 import kr.co.MyPick_server.DTO.admin.UserReq;
+import kr.co.MyPick_server.DTO.admin.UserRoomList;
 import kr.co.MyPick_server.DTO.admin.UseraccountSuspensionReq;
 import kr.co.MyPick_server.Service.JWT.JWTService;
 import kr.co.MyPick_server.Service.admin.AdminService;
@@ -58,10 +60,10 @@ public class AdminController {
         logger.info("adminCheck endpoint called.");
         logger.info("JWT: {}", CT_AT);
         ResponsData data = new ResponsData();
-        data.setIdentification(CT_AT);
 
         // Extracts the key (IDX) from the JWT token using the JWTService.
         int IDX = jwtService.extractKey(CT_AT);
+        data.setIdentification(IDX);
 
         // Handles different cases based on the IDX returned.
         if (IDX == -2) { // Account suspended
@@ -113,10 +115,10 @@ public class AdminController {
         logger.info("userList endpoint called.");
         logger.info("JWT: {}", CT_AT);
         ResponsData data = new ResponsData();
-        data.setIdentification(CT_AT);
 
         // Extracts the key (IDX) from the JWT token using the JWTService.
         int IDX = jwtService.extractKey(CT_AT);
+        data.setIdentification(IDX);
 
         // Handles different cases based on the IDX returned.
         if (IDX == -2) { // Account suspended
@@ -153,29 +155,17 @@ public class AdminController {
         return ResponseEntity.ok(data);
     }
 
-    /**
-     * Retrieves a specific user's messages for an authenticated admin.
-     *
-     * @param userReq A request object containing the user's ID and name, along with the admin's JWT token.
-     * @return ResponseEntity containing the user's messages or an appropriate error code.
-     *         Possible responses:
-     *         - Code "509": Account suspended.
-     *         - Code "503": JWT token does not exist.
-     *         - Code "504": Token expired.
-     *         - Code "590": Not an admin account.
-     *         - Code "591": User lookup failed.
-     *         - Code "200": Successfully retrieved user messages.
-     */
-    @PostMapping("/userMessage")
-    public ResponseEntity<?> userMessage(@Valid @RequestBody UserReq userReq) {
+    @PostMapping("/userRoom")
+    public ResponseEntity<?> userRoom(@Valid @RequestBody UserReq userReq) {
         logger.info("===================================================");
         logger.info("userMessage endpoint called.");
         logger.info("Request data: {}", userReq);
         ResponsData data = new ResponsData();
-        data.setIdentification(userReq.getCT_AT());
 
         // Extracts the key (IDX) from the JWT token using the JWTService.
         int IDX = jwtService.extractKey(userReq.getCT_AT());
+        data.setIdentification(IDX);
+
 
         // Handles different cases based on the IDX returned.
         if (IDX == -2) { // Account suspended
@@ -215,8 +205,85 @@ public class AdminController {
             return ResponseEntity.ok(data);
         }
 
+        List<UserRoomList> result = adminService.UserRoomGet(userIDX);
+        if (result.size() == 0) {
+            data.setCode("594");
+            data.setMessage("There are no chats.");
+            logger.info(data.toString());
+            return ResponseEntity.ok(data);
+        }
+
         // Retrieves messages for the specified user.
-        data.setData(adminService.UserMessageGet(userIDX));
+        data.setData(result);
+        logger.info(data.toString());
+        return ResponseEntity.ok(data);
+    }
+
+    /**
+     * Retrieves a specific user's messages for an authenticated admin.
+     *
+     * @param userReq A request object containing the user's ID and name, along with the admin's JWT token.
+     * @return ResponseEntity containing the user's messages or an appropriate error code.
+     *         Possible responses:
+     *         - Code "509": Account suspended.
+     *         - Code "503": JWT token does not exist.
+     *         - Code "504": Token expired.
+     *         - Code "590": Not an admin account.
+     *         - Code "591": User lookup failed.
+     *         - Code "200": Successfully retrieved user messages.
+     */
+    @PostMapping("/userMessage")
+    public ResponseEntity<?> userMessage(@Valid @RequestBody UserMessageReq userMessageReq) {
+        logger.info("===================================================");
+        logger.info("userMessage endpoint called.");
+        logger.info("UserMessageReq: {}", userMessageReq);
+        ResponsData data = new ResponsData();
+
+        // Extracts the key (IDX) from the JWT token using the JWTService.
+        int IDX = jwtService.extractKey(userMessageReq.getCT_AT());
+        data.setIdentification(IDX);
+
+
+        // Handles different cases based on the IDX returned.
+        if (IDX == -2) { // Account suspended
+            data.setCode("509");
+            data.setMessage("Your account has been suspended.");
+            logger.info(data.toString());
+            return ResponseEntity.ok(data);
+        }
+        if (IDX == -1) { // Token does not exist
+            data.setCode("503");
+            data.setMessage("CT_AT does not exist.");
+            logger.info(data.toString());
+            return ResponseEntity.ok(data);
+        }
+        if (IDX == 0) { // Token expired
+            data.setCode("504");
+            data.setMessage("Your time has expired.");
+            logger.info(data.toString());
+            return ResponseEntity.ok(data);
+        }
+
+        // Verifies if the user associated with the token is an administrator.
+        int adminCheck = adminService.adminCheck(IDX);
+        if (adminCheck == 0) { // Not an admin account
+            data.setCode("590");
+            data.setMessage("Your account is not an administrator.");
+            logger.info(data.toString());
+            return ResponseEntity.ok(data);
+        }
+
+        // Fetches the user ID based on the provided user information.
+        int userIDX = adminService.UserIDXGet(userMessageReq.getId(), userMessageReq.getName());
+        if (userIDX == 0) { // User lookup failed
+            data.setCode("591");
+            data.setMessage("User lookup failed.");
+            logger.info(data.toString());
+            return ResponseEntity.ok(data);
+        }
+
+        // Retrieves messages for the specified user.
+        data.setData(adminService.UserMessageGet(userIDX, userMessageReq.getChatIDX()));
         logger.info(data.toString());
         return ResponseEntity.ok(data);
     }
@@ -241,10 +308,11 @@ public class AdminController {
         logger.info("userGeneral endpoint called.");
         logger.info("Request data: {}", userReq);
         ResponsData data = new ResponsData();
-        data.setIdentification(userReq.getCT_AT());
 
         // Extracts the key (IDX) from the JWT token using the JWTService.
         int IDX = jwtService.extractKey(userReq.getCT_AT());
+        data.setIdentification(IDX);
+
 
         // Handles different cases based on the IDX returned.
         if (IDX == -2) { // Account suspended
@@ -318,10 +386,11 @@ public class AdminController {
         logger.info("accountSuspension endpoint called.");
         logger.info("Request data: {}", useraccountSuspensionReq);
         ResponsData data = new ResponsData();
-        data.setIdentification(useraccountSuspensionReq.getCT_AT());
 
         // Extracts the key (IDX) from the JWT token using the JWTService.
         int IDX = jwtService.extractKey(useraccountSuspensionReq.getCT_AT());
+        data.setIdentification(IDX);
+
 
         // Handles different cases based on the IDX returned.
         if (IDX == -2) { // Account suspended
@@ -395,10 +464,11 @@ public class AdminController {
         logger.info("userDel endpoint called.");
         logger.info("UserReq: {}", userReq);
         ResponsData data = new ResponsData();
-        data.setIdentification(userReq.getCT_AT());
 
         // Extracts the key (IDX) from the JWT token using the JWTService.
         int IDX = jwtService.extractKey(userReq.getCT_AT());
+        data.setIdentification(IDX);
+
 
         // Handles different cases based on the IDX returned.
         if (IDX == -2) { // Account suspended
@@ -458,10 +528,10 @@ public class AdminController {
         logger.info("userDel endpoint called.");
         logger.info("CT_AT: {}", CT_AT);
         ResponsData data = new ResponsData();
-        data.setIdentification(CT_AT);
 
         // Extracts the key (IDX) from the JWT token using the JWTService.
         int IDX = jwtService.extractKey(CT_AT);
+        data.setIdentification(IDX);
 
         // Handles different cases based on the IDX returned.
         if (IDX == -2) { // Account suspended

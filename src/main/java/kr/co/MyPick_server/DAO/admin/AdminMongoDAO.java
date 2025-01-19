@@ -23,5 +23,5 @@ public interface AdminMongoDAO extends MongoRepository<ChatMessageMongoReq, Inte
      * @param sort    The sorting criteria, typically by date in descending order, to get the latest messages first.
      * @return A list of `AdminMessageMongoReq` objects representing the chat messages associated with the specified user.
      */
-    List<AdminMessageMongoReq> findByUserIdx(int userIdx, Sort sort);
+    List<AdminMessageMongoReq> findByUserIdx(int userIdx, int chatIdx, Sort sort);
 }

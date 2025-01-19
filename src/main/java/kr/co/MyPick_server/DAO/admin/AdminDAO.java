@@ -1,9 +1,6 @@
 package kr.co.MyPick_server.DAO.admin;
 
-import kr.co.MyPick_server.DTO.admin.UserIDXGet;
-import kr.co.MyPick_server.DTO.admin.UserListDTO;
-import kr.co.MyPick_server.DTO.admin.UserListRes;
-import kr.co.MyPick_server.DTO.admin.UseraccountSuspensionSetReq;
+import kr.co.MyPick_server.DTO.admin.*;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -43,6 +40,8 @@ public interface AdminDAO {
      * @return The user's unique identifier (IDX) if a match is found, otherwise returns null.
      */
     Integer UserIDXGet(UserIDXGet userIDXGet);
+
+    List<UserRoomList> userRoomList (int userIDX);
 
     /**
      * Updates the privilege level of a user, such as promoting them to an administrator.

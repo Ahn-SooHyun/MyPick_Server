@@ -2,6 +2,7 @@ package kr.co.MyPick_server.Service.admin;
 
 import kr.co.MyPick_server.DTO.MongoDB.AdminMessageMongoReq;
 import kr.co.MyPick_server.DTO.admin.UserListDTO;
+import kr.co.MyPick_server.DTO.admin.UserRoomList;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -42,6 +43,8 @@ public interface AdminServiceImpl {
      */
     int UserIDXGet(String ID, String name);
 
+    List<UserRoomList> UserRoomGet(int userIDX);
+
     /**
      * Fetches all chat messages associated with a specific user, identified by their IDX.
      *
@@ -49,7 +52,7 @@ public interface AdminServiceImpl {
      * @return A list of `AdminMessageMongoReq` objects containing details about the user's chat messages,
      *         including timestamps, message content, and metadata.
      */
-    List<AdminMessageMongoReq> UserMessageGet(int userIDX);
+    List<AdminMessageMongoReq> UserMessageGet(int userIDX, int roomNum);
 
     /**
      * Updates a user's privilege level, promoting them to an administrator or adjusting their general access rights.

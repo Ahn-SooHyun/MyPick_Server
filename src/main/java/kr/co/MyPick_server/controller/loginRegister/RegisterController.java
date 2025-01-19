@@ -63,9 +63,11 @@ public class RegisterController {
         if (result != 0) {
             data.setCode("510");
             data.setMessage("ID Error.");
+            logger.info(data.toString());
             return ResponseEntity.ok(data);
         }
 
+        logger.info(data.toString());
         return ResponseEntity.ok(data);
     }
 
@@ -122,9 +124,7 @@ public class RegisterController {
             return ResponseEntity.ok(data);
         }
 
-        LoginDTO identification = loginService.login(result);
-        data.setIdentification(identification.getCT_AT());
-        loginService.logoutUpdate(result);
+        data.setIdentification(result);
 
         data.setMessage("Register Success");
         logger.info(data.toString());

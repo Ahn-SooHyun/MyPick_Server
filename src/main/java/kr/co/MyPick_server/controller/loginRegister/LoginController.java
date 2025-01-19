@@ -58,6 +58,8 @@ public class LoginController {
 
         // Validate the auto-login token and determine user state
         int IDX = loginService.autoLoginCheck(autoLoginReq.getToken());
+        data.setIdentification(IDX);
+
         if (IDX == -2) {
             // User account is suspended
             data.setCode("509");
@@ -83,7 +85,6 @@ public class LoginController {
         LoginDTO loginDTO = loginService.login(IDX);
         // If IDX > 0, the token is valid; retrieve user data
         data.setData(loginDTO);
-        data.setIdentification(loginDTO.getCT_AT());
         logger.info(data.toString());
         return ResponseEntity.ok(data);
     }
@@ -139,7 +140,7 @@ public class LoginController {
         // If IDX > 0, credentials are valid; retrieve user data
         LoginDTO loginDTO = loginService.login(IDX);
         data.setData(loginDTO);
-        data.setIdentification(loginDTO.getCT_AT());
+        data.setIdentification(IDX);
         logger.info(data.toString());
         return ResponseEntity.ok(data);
     }
@@ -151,10 +152,11 @@ public class LoginController {
         logger.info("CT_AT: {}", CT_AT);
 
         ResponsData data = new ResponsData();
-        data.setIdentification(CT_AT);
 
         // Extract user IDX (identifier) from the provided JWT token
         int IDX = jwtService.extractKey(CT_AT);
+        data.setIdentification(IDX);
+
 
         // Check various token validation cases
         if (IDX == -2) {

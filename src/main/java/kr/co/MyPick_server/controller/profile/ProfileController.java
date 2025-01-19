@@ -33,10 +33,10 @@ public class ProfileController {
 
         // A custom response data object to unify response structure
         ResponsData data = new ResponsData();
-        data.setIdentification(CT_AT);
 
         // Extract user IDX (identifier) from the provided JWT token
         int IDX = jwtService.extractKey(CT_AT);
+        data.setIdentification(IDX);
 
         // Check various token validation cases
         if (IDX == -2) {
@@ -83,10 +83,10 @@ public class ProfileController {
 
         // A custom response data object to unify response structure
         ResponsData data = new ResponsData();
-        data.setIdentification(updateInfoCheckReq.getCT_AT());
 
         // Extract user IDX (identifier) from the provided JWT token
         int IDX = jwtService.extractKey(updateInfoCheckReq.getCT_AT());
+        data.setIdentification(IDX);
 
         // Check various token validation cases
         if (IDX == -2) {
@@ -129,7 +129,6 @@ public class ProfileController {
 
         // A custom response data object to unify response structure
         ResponsData data = new ResponsData();
-        data.setIdentification(updateProfileReq.getCT_AT());
 
         if (updateProfileReq.getProfileImage().isEmpty()) {
             data.setCode("582");
@@ -147,6 +146,7 @@ public class ProfileController {
 
         // Extract user IDX (identifier) from the provided JWT token
         int IDX = jwtService.extractKey(updateProfileReq.getCT_AT());
+        data.setIdentification(IDX);
 
         // Check various token validation cases
         if (IDX == -2) {
@@ -192,10 +192,10 @@ public class ProfileController {
 
         // A custom response data object to unify response structure
         ResponsData data = new ResponsData();
-        data.setIdentification(updateInfoReq.getCT_AT());
 
         // Extract user IDX (identifier) from the provided JWT token
         int IDX = jwtService.extractKey(updateInfoReq.getCT_AT());
+        data.setIdentification(IDX);
 
         // Check various token validation cases
         if (IDX == -2) {

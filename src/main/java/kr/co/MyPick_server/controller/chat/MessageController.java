@@ -47,10 +47,10 @@ public class MessageController {
 
         // A custom response data object to unify response structure
         ResponsData data = new ResponsData();
-        data.setIdentification(chatMessageListReq.getCT_AT());
 
         // Extract user IDX (identifier) from the provided JWT token
         int IDX = jwtService.extractKey(chatMessageListReq.getCT_AT());
+        data.setIdentification(IDX);
 
         // Check various token validation cases
         if (IDX == -2) {
@@ -113,10 +113,10 @@ public class MessageController {
 
         // A custom response data object to unify response structure
         ResponsData data = new ResponsData();
-        data.setIdentification(chatReq.getCT_AT());
 
         // Extract user IDX (identifier) from the provided JWT token
         int IDX = jwtService.extractKey(chatReq.getCT_AT());
+        data.setIdentification(IDX);
 
         // Check various token validation cases
         if (IDX == -2) {

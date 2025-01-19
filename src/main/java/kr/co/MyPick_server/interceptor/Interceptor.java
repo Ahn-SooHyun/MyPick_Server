@@ -28,9 +28,6 @@ public class Interceptor implements HandlerInterceptor {
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired
-    private JWTService jwtService;
-
     // Log index for tracking
     private static final AtomicInteger logIndex = new AtomicInteger(1);
 
@@ -47,13 +44,7 @@ public class Interceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
         logger.info("============= construction_api =============");
-        logger.info("Request URI ==> : {}", request.toString());
         logger.info(request.getRequestURI());
-
-        logger.info("response URI ==> : {}", response.toString());
-
-        logger.info("handler URI ==> : {}", handler.toString());
-        logger.info("============================================");
 
         // 여기서 response.sendRedirect("/") 주석 처리를 해제하면 요청을 다른 URL로 리다이렉트할 수 있습니다.
         // response.sendRedirect("/");
@@ -74,10 +65,14 @@ public class Interceptor implements HandlerInterceptor {
             JsonNode jsonNode = objectMapper.readTree(responseBody);
 
             // identification 값 추출
-            String identification = jsonNode.get("identification").asText();
+            Integer userIDX = Integer.parseInt(jsonNode.get("identification").asText());
 
-            // identification을 사용해 userIDX 추출
-            int userIDX = jwtService.extractKey(identification);
+            if (userIDX == null) {
+                userIDX = 0;
+            }
+            if (userIDX <= 0) {
+                userIDX = 0;
+            }
 
             // identification 필드 제거
             ((ObjectNode) jsonNode).remove("identification");

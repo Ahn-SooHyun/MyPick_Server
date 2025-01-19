@@ -20,6 +20,13 @@
         WHERE Del = 0 AND ID = #{id} AND Name = #{name};
     </select>
 
+    <select id="userRoomList" resultType="UserRoomList" parameterType="int">
+        SELECT Chat_IDX, Category, Summary, Last_Date
+        FROM Chat_List
+        WHERE Del = 0 AND User_IDX = #{userIDX}
+        ORDER BY Last_Date DESC;;
+    </select>
+
     <update id="UserGeneralSet" parameterType="int">
         UPDATE User
         SET Login_Token = null,
