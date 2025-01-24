@@ -25,7 +25,7 @@ public class JWTUtil {
 
     private static final SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS256;
     private static final long EXPIRATION_TIME = 86400000L; // 1일 (밀리초)
-    private static final String KEY_FILE_PATH = "src/main/java/kr/co/MyPick_server/config/dynamicKey.txt"; // 키 파일 경로
+    private static final String KEY_FILE_PATH = "/volume1/docker/MyPick/Server/dynamicKey.txt"; // 키 파일 경로
 
     private Key fixedKey;
 

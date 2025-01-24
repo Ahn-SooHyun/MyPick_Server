@@ -1,10 +1,7 @@
 package kr.co.MyPick_server.Service.profile;
 
 import kr.co.MyPick_server.DAO.profile.ProfileDAO;
-import kr.co.MyPick_server.DTO.profile.UpdateInfoReq;
-import kr.co.MyPick_server.DTO.profile.UpdateInfoUpdateReq;
-import kr.co.MyPick_server.DTO.profile.UpdateProfileUpdateReq;
-import kr.co.MyPick_server.DTO.profile.UserDataDTO;
+import kr.co.MyPick_server.DTO.profile.*;
 import kr.co.MyPick_server.Util.BCryptUtil;
 import kr.co.MyPick_server.Util.Base64Util;
 import kr.co.MyPick_server.Util.ImageUtil;
@@ -88,13 +85,29 @@ public class ProfileService implements ProfileServiceImpl {
         UpdateInfoUpdateReq updateInfoUpdateReq = new UpdateInfoUpdateReq();
         updateInfoUpdateReq.setIDX(IDX);
         updateInfoUpdateReq.setId(base64Util.encode(updateInfoReq.getId()));
-        updateInfoUpdateReq.setPw(bCryptUtil.setPassword(base64Util.encode(updateInfoReq.getPw())));
-        updateInfoUpdateReq.setName(updateInfoReq.getName());
         updateInfoUpdateReq.setNickName(updateInfoReq.getNickName());
-        updateInfoUpdateReq.setBirth(updateInfoReq.getBirth());
 
-        int result = profileDAO.updateInfoUpdate(updateInfoUpdateReq);
+        return profileDAO.updateInfoUpdate(updateInfoUpdateReq);
+    }
 
-        return result;
+    @Override
+    public int updatePWUpdate(int IDX, String oldPW, String newPW) {
+        if (oldPW.equals(newPW)) {
+            return -2;
+        }
+
+        int oldPWCheck = updateInfoCheck(IDX, oldPW);
+        if (oldPWCheck == 0) {
+            return -1;
+        }
+        UpdatePWSetReq updatePWSetReq = new UpdatePWSetReq();
+        updatePWSetReq.setIDX(IDX);
+        updatePWSetReq.setNewPW(bCryptUtil.setPassword(base64Util.encode(newPW)));
+        int result = profileDAO.updatePWUpdate(updatePWSetReq);
+        if (result == 0) {
+            return 0;
+        }
+
+        return profileDAO.updatePWUpdate(updatePWSetReq);
     }
 }

@@ -563,7 +563,7 @@ public class AdminController {
         }
 
         // Fetch logs from Interceptor and set to data
-        List<String> logs = interceptor.readLogsFromFile("logs/interceptor.log");
+        List<String> logs = interceptor.readLogsFromFile("/volume1/docker/MyPick/Server/logs/interceptor.log");
         if (logs == null) {
             data.setCode("599");
             data.setMessage("No log records found.");

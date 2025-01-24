@@ -1,10 +1,7 @@
 package kr.co.MyPick_server.controller.profile;
 
 import jakarta.validation.Valid;
-import kr.co.MyPick_server.DTO.profile.UpdateInfoCheckReq;
-import kr.co.MyPick_server.DTO.profile.UpdateInfoReq;
-import kr.co.MyPick_server.DTO.profile.UpdateProfileReq;
-import kr.co.MyPick_server.DTO.profile.UserDataDTO;
+import kr.co.MyPick_server.DTO.profile.*;
 import kr.co.MyPick_server.Service.JWT.JWTService;
 import kr.co.MyPick_server.Service.profile.ProfileService;
 import kr.co.MyPick_server.Util.ResponsData;
@@ -180,6 +177,65 @@ public class ProfileController {
         }
 
         data.setMessage("Successfully uploaded the profile image.");
+        logger.info(data.toString());
+        return ResponseEntity.ok(data);
+    }
+
+    @PostMapping("/updatePW")
+    public ResponseEntity<?> updatePW(@RequestBody @Valid UpdatePWReq updatePWReq) {
+        logger.info("==================================================");
+        logger.info("updatePW");
+        logger.info("UpdateInfoReq : {}", updatePWReq);
+        ResponsData data = new ResponsData();
+
+        // Extract user IDX (identifier) from the provided JWT token
+        int IDX = jwtService.extractKey(updatePWReq.getCT_AT());
+        data.setIdentification(IDX);
+
+        // Check various token validation cases
+        if (IDX == -2) {
+            // -2 means the account is suspended
+            data.setCode("509");
+            data.setMessage("Your account has been suspended.");
+            logger.info(data.toString());
+            return ResponseEntity.ok(data);
+        }
+        if (IDX == -1) {
+            // -1 means the token does not exist
+            data.setCode("503");
+            data.setMessage("CT_AT does not exist.");
+            logger.info(data.toString());
+            return ResponseEntity.ok(data);
+        }
+        if (IDX == 0) {
+            // 0 means the token has expired
+            data.setCode("504");
+            data.setMessage("Your time has expired.");
+            logger.info(data.toString());
+            return ResponseEntity.ok(data);
+        }
+
+        int result = profileService.updatePWUpdate(IDX, updatePWReq.getOldPW(), updatePWReq.getNewPW());
+        if (result == -2) {
+            data.setCode("586");
+            data.setMessage("The new PW is the same as the existing PW.");
+            logger.info(data.toString());
+            return ResponseEntity.ok(data);
+        }
+        if (result == -1) {
+            data.setCode("587");
+            data.setMessage("PassWord Check Failed.");
+            logger.info(data.toString());
+            return ResponseEntity.ok(data);
+        }
+        if (result == 0) {
+            data.setCode("588");
+            data.setMessage("PassWord Change Failed.");
+            logger.info(data.toString());
+            return ResponseEntity.ok(data);
+        }
+
+        data.setMessage("PassWord Change Succeeded.");
         logger.info(data.toString());
         return ResponseEntity.ok(data);
     }

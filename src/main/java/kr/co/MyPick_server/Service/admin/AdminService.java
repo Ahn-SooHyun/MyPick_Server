@@ -46,37 +46,41 @@ public class AdminService implements AdminServiceImpl{
             // 데이터 설정
             userListRes.get(i).setID(base64Util.decode(userListRes.get(i).getID()));
 
-            if (userListRes.get(i).getGeneral().equals("1")) {
+            if ("1".equals(userListRes.get(i).getGeneral())) {
                 userListRes.get(i).setGeneral("관리자");
             } else {
                 userListRes.get(i).setGeneral("일반 사용자");
             }
 
             // 계정 정지 날짜 처리
-            if (userListRes.get(i).getAccountSuspension().toLocalDateTime().toLocalDate().isBefore(LocalDate.now())) {
-                userListRes.get(i).setAccountSuspension(null);
-            } else {
-                userListRes.get(i).setAccountSuspension(
+            Timestamp accountSuspension = userListRes.get(i).getAccountSuspension();
+            if (accountSuspension != null) {
+                if (accountSuspension.toLocalDateTime().toLocalDate().isBefore(LocalDate.now())) {
+                    userListRes.get(i).setAccountSuspension(null);
+                } else {
+                    userListRes.get(i).setAccountSuspension(
+                            Timestamp.valueOf(
+                                    accountSuspension.toLocalDateTime()
+                                            .atZone(ZoneId.of("UTC"))
+                                            .withZoneSameInstant(ZoneId.of("Asia/Seoul"))
+                                            .toLocalDateTime()
+                            )
+                    );
+                }
+            }
+
+            // JWT 토큰 날짜 처리
+            Timestamp jwtTokenDate = userListRes.get(i).getJwtTokenDate();
+            if (jwtTokenDate != null) {
+                userListRes.get(i).setJwtTokenDate(
                         Timestamp.valueOf(
-                                userListRes.get(i).getAccountSuspension()
-                                        .toLocalDateTime()
+                                jwtTokenDate.toLocalDateTime()
                                         .atZone(ZoneId.of("UTC"))
                                         .withZoneSameInstant(ZoneId.of("Asia/Seoul"))
                                         .toLocalDateTime()
                         )
                 );
             }
-
-            // JWT 토큰 날짜 처리
-            userListRes.get(i).setJwtTokenDate(
-                    Timestamp.valueOf(
-                            userListRes.get(i).getJwtTokenDate()
-                                    .toLocalDateTime()
-                                    .atZone(ZoneId.of("UTC"))
-                                    .withZoneSameInstant(ZoneId.of("Asia/Seoul"))
-                                    .toLocalDateTime()
-                    )
-            );
 
             // DTO 값 설정
             dto.setName(userListRes.get(i).getName());
@@ -91,8 +95,8 @@ public class AdminService implements AdminServiceImpl{
         }
 
         return userListDTO;
-
     }
+
 
     @Override
     public int UserIDXGet(String ID, String name) {

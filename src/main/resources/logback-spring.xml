@@ -4,7 +4,7 @@
 
     <!-- Interceptor 전용 로그 파일 설정 -->
     <appender name="INTERCEPTOR_FILE" class="ch.qos.logback.core.FileAppender">
-        <file>logs/interceptor.log</file> <!-- Interceptor 로그 파일 경로 -->
+        <file>/volume1/docker/MyPick/Server/interceptor.log</file> <!-- Interceptor 로그 파일 경로 -->
         <append>true</append>
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
@@ -13,7 +13,7 @@
 
     <!-- Application 전용 로그 파일 설정 -->
     <appender name="APPLICATION_FILE" class="ch.qos.logback.core.FileAppender">
-        <file>logs/application.log</file> <!-- Application 로그 파일 경로 -->
+        <file>/volume1/docker/MyPick/Server/logs/application.log</file> <!-- Application 로그 파일 경로 -->
         <append>true</append>
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>

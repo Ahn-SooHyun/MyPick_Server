@@ -1,9 +1,6 @@
 package kr.co.MyPick_server.DAO.profile;
 
-import kr.co.MyPick_server.DTO.profile.UpdateInfoReq;
-import kr.co.MyPick_server.DTO.profile.UpdateInfoUpdateReq;
-import kr.co.MyPick_server.DTO.profile.UpdateProfileUpdateReq;
-import kr.co.MyPick_server.DTO.profile.UserDataDTO;
+import kr.co.MyPick_server.DTO.profile.*;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
@@ -16,5 +13,7 @@ public interface ProfileDAO {
     void updateProfileSet(UpdateProfileUpdateReq updateProfileSetReq);
 
     int updateInfoUpdate(UpdateInfoUpdateReq updateInfoUpdateReq);
+
+    int updatePWUpdate(UpdatePWSetReq updatePWSetReq);
 
 }

@@ -15,7 +15,7 @@ public class ImageUtil {
     Logger logger = LoggerFactory.getLogger(ImageUtil.class);
 
     // Fixed paths for images
-    private static final String IMAGE_BASE_PATH = "src/main/resources/static/profileImage/";
+    private static final String IMAGE_BASE_PATH = "/volume1/docker/MyPick/Server/profile/";
     private static final String DEFAULT_IMAGE = "index.png";
     private static final long MAX_FILE_SIZE = 1048576; // 1MB in bytes
 
@@ -30,10 +30,14 @@ public class ImageUtil {
     public String getBase64EncodedImage(String fileName) throws Exception {
         Path imagePath = Paths.get(IMAGE_BASE_PATH + fileName);
 
-        logger.info(imagePath.toString());
+        logger.info("Attempting to access image at path: {}", imagePath.toAbsolutePath());
 
-        if (!Files.exists(imagePath) || isFileSizeExceeded(imagePath)) {
-            imagePath = getDefaultImagePath(); // Use default image
+        if (!Files.exists(imagePath)) {
+            logger.error("File does not exist: {}. Using default image.", imagePath);
+            imagePath = getDefaultImagePath();
+        } else if (isFileSizeExceeded(imagePath)) {
+            logger.error("File size exceeds limit: {}. Using default image.", imagePath);
+            imagePath = getDefaultImagePath();
         }
 
         byte[] imageBytes = Files.readAllBytes(imagePath);
@@ -49,7 +53,12 @@ public class ImageUtil {
      * @throws Exception If the file cannot be accessed
      */
     private boolean isFileSizeExceeded(Path imagePath) throws Exception {
-        return Files.size(imagePath) > MAX_FILE_SIZE; // 1MB = 1048576 bytes
+        try {
+            return Files.size(imagePath) > MAX_FILE_SIZE; // 1MB = 1048576 bytes
+        } catch (IOException e) {
+            logger.error("Error while checking file size: {}", imagePath, e);
+            throw e;
+        }
     }
 
     /**
@@ -58,7 +67,9 @@ public class ImageUtil {
      * @return Path of the default image
      */
     private Path getDefaultImagePath() {
-        return Paths.get(IMAGE_BASE_PATH + DEFAULT_IMAGE);
+        Path defaultImagePath = Paths.get(IMAGE_BASE_PATH + DEFAULT_IMAGE);
+        logger.info("Default image path: {}", defaultImagePath.toAbsolutePath());
+        return defaultImagePath;
     }
 
     /**
@@ -73,11 +84,12 @@ public class ImageUtil {
     }
 
     /**
-     * 파일을 저장하고 파일 이름을 반환합니다.
+     * Saves the file and returns its file name.
      *
-     * @param file MultipartFile 업로드된 파일
-     * @return 저장된 파일의 이름
-     * @throws IOException 파일 저장 중 오류가 발생했을 경우
+     * @param file          MultipartFile uploaded file
+     * @param customFileName Custom file name
+     * @return The name of the saved file
+     * @throws IOException If an error occurs during file saving
      */
     public String saveFile(MultipartFile file, int customFileName) throws Exception {
         if (file.isEmpty()) {
@@ -88,20 +100,20 @@ public class ImageUtil {
             throw new IOException("File size exceeds the allowable limit of 1MB");
         }
 
-        // 원본 파일의 확장자 추출
+        // Extract the original file extension
         String originalFileName = file.getOriginalFilename();
         String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
 
-        // 사용자 지정 파일명에 확장자 추가
+        // Append the extension to the custom file name
         String fileNameWithExtension = customFileName + extension;
         Path destinationPath = Paths.get(IMAGE_BASE_PATH + fileNameWithExtension);
 
-        // 동일한 이름을 가진 파일(확장자 무시) 삭제
+        // Delete existing files with the same custom file name (ignoring extension)
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(IMAGE_BASE_PATH))) {
             for (Path path : stream) {
                 if (path.getFileName().toString().startsWith(customFileName + ".")) {
                     Files.delete(path);
-                    logger.info("Deleted existing file with the same name (ignoring extension): " + path);
+                    logger.info("Deleted existing file with the same name (ignoring extension): {}", path);
                 }
             }
         } catch (IOException e) {
@@ -109,10 +121,10 @@ public class ImageUtil {
             throw e;
         }
 
-        // 파일 복사 및 저장
+        // Save the file
         try {
             Files.copy(file.getInputStream(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
-            logger.info("File saved successfully: " + destinationPath);
+            logger.info("File saved successfully: {}", destinationPath);
         } catch (IOException e) {
             logger.error("Failed to save file", e);
             throw e;
@@ -120,6 +132,4 @@ public class ImageUtil {
 
         return fileNameWithExtension;
     }
-
-
 }

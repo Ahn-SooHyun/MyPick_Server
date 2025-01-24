@@ -11,7 +11,7 @@
     </select>
 
     <select id="listGet" resultType="NoticeListDTO" >
-        SELECT IDX, Title, Category, Editor, Editor_Date
+        SELECT IDX, Title, Category, Content, Editor, Editor_Date
         FROM Notice
         WHERE DEL = 0
         ORDER BY Editor_Date DESC

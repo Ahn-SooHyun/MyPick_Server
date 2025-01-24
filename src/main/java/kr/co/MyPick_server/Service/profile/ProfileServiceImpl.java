@@ -14,6 +14,5 @@ public interface ProfileServiceImpl {
 
     int updateInfoUpdate(int IDX, UpdateInfoReq updateInfoReq);
 
-
-
+    int updatePWUpdate(int IDX, String oldPW, String newPW);
 }
