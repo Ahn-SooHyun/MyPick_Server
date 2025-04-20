@@ -1,0 +1,27 @@
+name: CI
+
+on: [push]          # main 브랜치에 push 될 때마다 실행
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1) 소스 체크아웃
+      - uses: actions/checkout@v4
+
+      # 2) JDK 21 설치 (필요하면 17 등으로 변경)
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle       # 의존성 캐시로 빌드 속도 ↑
+
+      # 3) gradlew 실행 권한 부여
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      # 4) 빌드 & (현재는) 테스트 생략
+      - name: Build Spring Boot project
+        run: ./gradlew clean build -x test
